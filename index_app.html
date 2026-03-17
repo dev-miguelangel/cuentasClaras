@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0052cc" />
+  <title>CuentasRápidas</title>
+  <style>
+    :root {
+      --safe-top: env(safe-area-inset-top, 44px);
+      --safe-bottom: env(safe-area-inset-bottom, 34px);
+      --tabbar-h: 56px;
+      --blue: #0079bf;
+      --blue-dark: #0052cc;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+      background: #0079bf;
+      color: #172b4d;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      overscroll-behavior: none;
+      user-select: none;
+    }
+
+    /* ===== VIEWS ===== */
+    .view {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .view.active { display: flex; }
+
+    /* ===== LOGIN ===== */
+    #login-view {
+      background: linear-gradient(160deg, #0052cc 0%, #0079bf 60%, #00aecc 100%);
+      justify-content: flex-end;
+    }
+
+    .login-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: var(--safe-top);
+      color: white;
+      gap: 10px;
+    }
+
+    .login-hero-logo { font-size: 64px; line-height: 1; }
+    .login-hero h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .login-hero p { font-size: 15px; color: rgba(255,255,255,0.7); text-align: center; padding: 0 40px; }
+
+    .login-panel {
+      background: white;
+      border-radius: 24px 24px 0 0;
+      padding: 8px 20px calc(var(--safe-bottom) + 24px);
+      box-shadow: 0 -4px 32px rgba(0,0,0,0.18);
+    }
+
+    .panel-handle {
+      width: 36px; height: 4px;
+      background: #dfe1e6; border-radius: 2px;
+      margin: 10px auto 20px;
+    }
+
+    .login-panel input {
+      width: 100%;
+      padding: 15px 16px;
+      border: 2px solid #dfe1e6;
+      border-radius: 12px;
+      font-size: 17px;
+      color: #172b4d;
+      outline: none;
+      margin-bottom: 14px;
+      -webkit-appearance: none;
+      user-select: text;
+      transition: border-color 0.2s;
+    }
+    .login-panel input:focus { border-color: #0079bf; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: #0079bf;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 52px;
+      -webkit-appearance: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:active { background: #0052cc; }
+
+    .login-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 20px 0 16px; color: #b3bac5; font-size: 12px;
+    }
+    .login-divider::before, .login-divider::after {
+      content: ''; flex: 1; height: 1px; background: #dfe1e6;
+    }
+
+    .users-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .user-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 12px;
+      border: 1.5px solid #dfe1e6; background: #f4f5f7;
+      cursor: pointer; width: 100%; text-align: left; min-height: 56px;
+    }
+    .user-item:active { background: #e8f4fd; border-color: #0079bf; }
+
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      color: white; font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; text-transform: uppercase;
+    }
+
+    .user-name { font-size: 15px; font-weight: 600; color: #172b4d; flex: 1; }
+    .user-item-arrow { color: #b3bac5; font-size: 20px; }
+
+    .user-delete-btn {
+      background: none; border: none; color: #b3bac5;
+      padding: 6px 8px; border-radius: 6px; font-size: 15px;
+      cursor: pointer; min-width: 34px; min-height: 34px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .user-delete-btn:active { color: #de350b; background: #ffebe6; }
+
+    /* ===== APP HEADER ===== */
+    .app-header {
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.2);
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding: calc(var(--safe-top) + 6px) 14px 12px;
+      min-height: calc(var(--safe-top) + 54px);
+    }
+
+    .app-header-back {
+      background: rgba(255,255,255,0.2); border: none;
+      color: white; padding: 8px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      white-space: nowrap; min-height: 36px;
+    }
+    .app-header-back:active { background: rgba(255,255,255,0.35); }
+
+    .app-header-title {
+      color: white; font-size: 16px; font-weight: 700;
+      flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .app-header-user {
+      background: rgba(255,255,255,0.2); color: white;
+      padding: 5px 11px; border-radius: 99px;
+      font-size: 13px; font-weight: 500;
+      max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .app-header-logout {
+      background: rgba(255,255,255,0.18); color: white; border: none;
+      padding: 7px 12px; border-radius: 8px; font-size: 13px;
+      cursor: pointer; min-height: 36px;
+    }
+    .app-header-logout:active { background: rgba(255,255,255,0.35); }
+
+    /* ===== BOARDS VIEW ===== */
+    #boards-view { background: linear-gradient(160deg, #0052cc 0%, #0079bf 60%, #00aecc 100%); }
+
+    .boards-scroll {
+      flex: 1; overflow-y: auto; padding: 20px 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .boards-heading {
+      font-size: 20px; font-weight: 700;
+      color: rgba(255,255,255,0.92); margin-bottom: 16px;
+    }
+
+    .boards-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .board-item {
+      background: white; border-radius: 14px;
+      display: flex; align-items: center; overflow: hidden;
+      cursor: pointer; min-height: 68px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+    .board-item:active { opacity: 0.88; }
+
+    .board-item-stripe { width: 6px; align-self: stretch; flex-shrink: 0; }
+
+    .board-item-body { flex: 1; padding: 14px 12px; }
+    .board-item-name { font-size: 16px; font-weight: 700; color: #172b4d; margin-bottom: 3px; }
+    .board-item-meta { font-size: 13px; color: #97a0af; }
+
+    .board-item-delete {
+      background: none; border: none; color: #c1c7d0;
+      padding: 0 14px; font-size: 16px; cursor: pointer;
+      min-height: 68px; display: flex; align-items: center;
+    }
+    .board-item-delete:active { color: #de350b; }
+
+    .board-item-arrow { color: #c1c7d0; font-size: 20px; padding-right: 14px; }
+
+    .board-new-btn {
+      background: rgba(255,255,255,0.16);
+      border: 2px dashed rgba(255,255,255,0.4); border-radius: 14px;
+      color: rgba(255,255,255,0.85); font-size: 16px; font-weight: 600;
+      padding: 18px; text-align: center; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 60px;
+    }
+    .board-new-btn:active { background: rgba(255,255,255,0.26); }
+
+    .boards-footer { height: calc(var(--safe-bottom) + 20px); flex-shrink: 0; }
+
+    /* ===== BOARD VIEW ===== */
+    #board-view { background: #0079bf; }
+
+    .col-summary {
+      flex-shrink: 0;
+      padding: 14px 16px 12px;
+      background: rgba(0,0,0,0.12);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .col-summary-title {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px;
+    }
+
+    .col-summary-total {
+      font-size: 30px; font-weight: 800;
+      color: white; letter-spacing: -0.8px; line-height: 1;
+    }
+
+    .col-budget { margin-top: 12px; }
+
+    /* ===== TAB CONTENT ===== */
+    #tab-content {
+      flex: 1; overflow-y: auto; padding: 12px 12px 0;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(var(--safe-bottom) + var(--tabbar-h) + 76px);
+    }
+
+    /* ===== CARDS ===== */
+    .mob-card {
+      background: white; border-radius: 14px;
+      padding: 14px 14px 12px; margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(9,30,66,0.1), 0 0 0 1px rgba(9,30,66,0.04);
+    }
+
+    .mob-card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+
+    .mob-card-priority-bar {
+      width: 4px; align-self: stretch;
+      border-radius: 2px; flex-shrink: 0; min-height: 20px;
+    }
+
+    .mob-card-title {
+      flex: 1; font-size: 15px; font-weight: 500;
+      color: #172b4d; line-height: 1.45; word-break: break-word;
+      user-select: text;
+    }
+
+    .mob-card-footer {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 8px;
+    }
+
+    .mob-card-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    .mob-card-amount {
+      font-size: 16px; font-weight: 800;
+      color: #172b4d; letter-spacing: -0.3px;
+    }
+
+    .mob-card-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+    .mob-card-move {
+      background: #f0f1f3; border: none; color: #5e6c84;
+      padding: 7px 11px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      min-height: 34px; display: flex; align-items: center; gap: 3px;
+    }
+    .mob-card-move:active { background: #dfe1e6; }
+
+    .mob-card-delete {
+      background: none; border: none; color: #c1c7d0;
+      padding: 7px; border-radius: 8px; font-size: 15px;
+      cursor: pointer; min-height: 34px; min-width: 34px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mob-card-delete:active { color: #de350b; background: #ffebe6; }
+
+    /* Priority */
+    .priority-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 99px;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .priority-badge.vital  { background: #ffebe6; color: #de350b; }
+    .priority-badge.gusto  { background: #e8f4fd; color: #0052cc; }
+    .priority-badge.capricho { background: #f0ebff; color: #6554c0; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 56px 24px;
+      color: rgba(255,255,255,0.55);
+    }
+    .empty-state-icon { font-size: 52px; margin-bottom: 14px; }
+    .empty-state-text { font-size: 16px; font-weight: 600; }
+    .empty-state-sub { font-size: 14px; margin-top: 6px; opacity: 0.75; }
+
+    /* ===== TAB BAR ===== */
+    .tab-bar {
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.28);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      padding-bottom: var(--safe-bottom);
+    }
+
+    .tab-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 4px; cursor: pointer; border: none;
+      background: none; color: rgba(255,255,255,0.45);
+      font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.4px;
+      gap: 3px; min-height: var(--tabbar-h);
+      position: relative; transition: color 0.15s;
+    }
+    .tab-item.active { color: white; }
+
+    .tab-item-icon { font-size: 22px; line-height: 1; }
+
+    .tab-item::after {
+      content: ''; position: absolute;
+      top: 0; left: 20%; right: 20%; height: 2px;
+      background: white; border-radius: 0 0 2px 2px;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .tab-item.active::after { opacity: 1; }
+
+    /* ===== FAB ===== */
+    #fab {
+      position: absolute;
+      right: 18px;
+      bottom: calc(var(--safe-bottom) + var(--tabbar-h) + 14px);
+      width: 58px; height: 58px;
+      background: white; color: #0079bf; border: none;
+      border-radius: 50%; font-size: 30px; font-weight: 300;
+      cursor: pointer; z-index: 10;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.14);
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    #fab:active { transform: scale(0.9); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+    /* ===== BUDGET ===== */
+    .budget-empty {
+      border: 1.5px dashed rgba(255,255,255,0.32);
+      border-radius: 10px; padding: 12px 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .budget-empty:active { background: rgba(255,255,255,0.08); }
+    .budget-empty-icon { font-size: 22px; flex-shrink: 0; }
+    .budget-empty-title { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.88); }
+    .budget-empty-sub { font-size: 12px; color: rgba(255,255,255,0.48); margin-top: 2px; }
+
+    .budget-bar-wrap {
+      cursor: pointer; border-radius: 10px;
+      padding: 10px 12px; background: rgba(255,255,255,0.1);
+    }
+    .budget-bar-wrap:active { background: rgba(255,255,255,0.17); }
+
+    .budget-bar-label-row {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 7px;
+    }
+    .budget-bar-label-left {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .budget-bar-label-right { font-size: 11px; color: rgba(255,255,255,0.45); }
+
+    .budget-bar-track {
+      height: 8px; background: rgba(255,255,255,0.15);
+      border-radius: 99px; overflow: hidden;
+    }
+    .budget-bar-fill {
+      height: 100%; border-radius: 99px;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+    .budget-meta {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-top: 7px;
+    }
+    .budget-remaining { font-size: 15px; font-weight: 700; }
+    .budget-edit-hint { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+    /* ===== ANALYTICS ===== */
+    .analytics-block { margin-bottom: 8px; }
+    .analytics-block-title {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .charts-row { display: flex; gap: 6px; }
+    .charts-row .analytics-canvas { flex: 1; min-width: 0; }
+    .analytics-canvas { display: block; width: 100%; }
+    .chart-divider { height: 1px; background: rgba(255,255,255,0.14); margin: 18px 0; }
+
+    .priority-guide { display: flex; flex-direction: column; gap: 16px; }
+    .priority-guide-item { display: flex; gap: 12px; align-items: flex-start; }
+    .priority-guide-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 4px;
+    }
+    .priority-guide-name { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .priority-guide-desc { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; line-height: 1.4; }
+
+    /* ===== BOTTOM SHEETS ===== */
+    .sheet-overlay {
+      position: fixed; inset: 0;
+      background: rgba(9,30,66,0.5);
+      z-index: 200; display: none; align-items: flex-end;
+    }
+    .sheet-overlay.active { display: flex; }
+
+    .sheet {
+      background: white; border-radius: 22px 22px 0 0;
+      width: 100%; max-height: 92dvh; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--safe-bottom);
+      animation: sheetUp 0.28s cubic-bezier(0.32,0.72,0,1);
+    }
+
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 36px; height: 4px; background: #dfe1e6;
+      border-radius: 2px; margin: 12px auto 0;
+    }
+
+    .sheet-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid #f0f1f3;
+    }
+
+    .sheet-title { font-size: 17px; font-weight: 700; color: #172b4d; }
+
+    .sheet-close {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #f0f1f3; border: none; color: #5e6c84;
+      font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sheet-close:active { background: #dfe1e6; }
+
+    .sheet-body { padding: 20px; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: #5e6c84; text-transform: uppercase;
+      letter-spacing: 0.6px; margin-bottom: 8px;
+    }
+    .form-group input {
+      width: 100%; padding: 15px 16px;
+      border: 2px solid #dfe1e6; border-radius: 12px;
+      font-size: 17px; color: #172b4d; outline: none;
+      -webkit-appearance: none; user-select: text;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: #0079bf; }
+    .form-group input.error { border-color: #de350b; }
+
+    .priority-selector { display: flex; gap: 8px; }
+    .priority-opt {
+      flex: 1; padding: 13px 4px; border: 2px solid #dfe1e6;
+      border-radius: 10px; background: white;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      color: #5e6c84; min-height: 48px; transition: all 0.15s;
+    }
+    .priority-opt:active { background: #f4f5f7; }
+    .priority-opt[data-priority="vital"].active   { border-color: #de350b; background: #ffebe6; color: #de350b; }
+    .priority-opt[data-priority="gusto"].active   { border-color: #0079bf; background: #e8f4fd; color: #0052cc; }
+    .priority-opt[data-priority="capricho"].active { border-color: #6554c0; background: #f0ebff; color: #6554c0; }
+
+    .sheet-context { font-size: 14px; color: #5e6c84; margin-bottom: 18px; line-height: 1.5; }
+
+    .sbtn {
+      display: block; width: 100%; padding: 16px;
+      border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; min-height: 52px;
+      margin-bottom: 10px; -webkit-appearance: none;
+      transition: opacity 0.15s;
+    }
+    .sbtn:active { opacity: 0.8; }
+    .sbtn-primary { background: #0079bf; color: white; }
+    .sbtn-secondary { background: #f0f1f3; color: #5e6c84; }
+    .sbtn-danger { background: #ffebe6; color: #de350b; }
+
+    /* Move sheet */
+    .move-info { font-size: 14px; color: #5e6c84; margin-bottom: 18px; line-height: 1.4; }
+    .move-col-btn {
+      width: 100%; display: flex; align-items: center; gap: 14px;
+      padding: 16px; background: white;
+      border: 1.5px solid #dfe1e6; border-radius: 12px;
+      margin-bottom: 10px; cursor: pointer;
+      font-size: 16px; font-weight: 600; color: #172b4d;
+      text-align: left; min-height: 56px;
+    }
+    .move-col-btn:active { background: #f4f5f7; }
+    .move-col-btn.current { opacity: 0.38; pointer-events: none; }
+    .move-col-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .move-col-current-tag { margin-left: auto; font-size: 12px; color: #97a0af; font-weight: 400; }
+
+    /* Import */
+    .import-divider { height: 1px; background: #f0f1f3; margin: 4px 0 18px; }
+    .import-section-label {
+      font-size: 11px; font-weight: 700; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      display: block; margin-bottom: 12px;
+    }
+    .import-board-group { margin-bottom: 14px; }
+    .import-board-name {
+      font-size: 11px; font-weight: 700; color: #97a0af;
+      text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
+    }
+    .import-expense-list { display: flex; flex-direction: column; gap: 6px; }
+    .import-expense-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 14px; border-radius: 10px;
+      border: 1.5px solid #dfe1e6; cursor: pointer;
+      min-height: 52px; transition: all 0.15s;
+    }
+    .import-expense-item:active { background: #f4f5f7; }
+    .import-expense-item.selected { border-color: #0079bf; background: #e8f4fd; }
+    .import-expense-item input[type="checkbox"] {
+      accent-color: #0079bf; width: 18px; height: 18px; flex-shrink: 0;
+    }
+    .import-expense-name {
+      font-size: 14px; color: #172b4d; flex: 1;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .import-expense-amount { font-size: 13px; font-weight: 700; color: #5e6c84; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-view" class="view active">
+    <div class="login-hero">
+      <div class="login-hero-logo">💳</div>
+      <h1>CuentasRápidas</h1>
+      <p>Organiza Tus Gastos Con Un Tablero Kanban</p>
+    </div>
+    <div class="login-panel">
+      <div class="panel-handle"></div>
+      <input type="text" id="username-input" placeholder="Tu Nombre De Usuario"
+             maxlength="30" autocomplete="off" autocapitalize="words" />
+      <button class="btn-primary" id="login-btn">Ingresar</button>
+      <div id="users-section" style="display:none">
+        <div class="login-divider">O Ingresa Como</div>
+        <div class="users-list" id="users-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOARDS -->
+  <div id="boards-view" class="view">
+    <div class="app-header">
+      <span class="app-header-title">💳 CuentasRápidas</span>
+      <span class="app-header-user" id="boards-user-badge"></span>
+      <button class="app-header-logout" id="boards-logout-btn">Salir</button>
+    </div>
+    <div class="boards-scroll">
+      <div class="boards-heading">Tus Tableros</div>
+      <div class="boards-list" id="boards-list"></div>
+    </div>
+    <div class="boards-footer"></div>
+  </div>
+
+  <!-- BOARD -->
+  <div id="board-view" class="view">
+    <div class="app-header">
+      <button class="app-header-back" id="back-btn">← Tableros</button>
+      <span class="app-header-title" id="header-board-name"></span>
+      <button class="app-header-logout" id="logout-btn">Salir</button>
+    </div>
+    <div class="col-summary" id="col-summary"></div>
+    <div id="tab-content"></div>
+    <button id="fab">+</button>
+    <nav class="tab-bar" id="tab-bar">
+      <button class="tab-item" data-tab="por_pagar">
+        <span class="tab-item-icon">📋</span>
+        <span>Por Pagar</span>
+      </button>
+      <button class="tab-item" data-tab="carrito">
+        <span class="tab-item-icon">🛒</span>
+        <span>Carrito</span>
+      </button>
+      <button class="tab-item" data-tab="pagado">
+        <span class="tab-item-icon">✅</span>
+        <span>Pagado</span>
+      </button>
+      <button class="tab-item" data-tab="analytics">
+        <span class="tab-item-icon">📊</span>
+        <span>Análisis</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- SHEET: Add Expense -->
+  <div class="sheet-overlay" id="add-sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">Agregar Gasto</div>
+        <button class="sheet-close" id="add-sheet-close">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="form-group">
+          <label for="add-titulo">Título</label>
+          <input type="text" id="add-titulo" placeholder="Ej: Supermercado"
+                 maxlength="80" autocapitalize="sentences" />
+        </div>
+        <div class="form-group">
+          <label for="add-monto">Monto (CLP)</label>
+          <input type="number" id="add-monto" placeholder="Ej: 15000"
+                 min="0" step="1" inputmode="numeric" />
+        </div>
+        <div class="form-group">
+          <label>Prioridad</label>
+          <div class="priority-selector" id="priority-selector">
+            <button class="priority-opt" data-priority="vital">Vital</button>
+            <button class="priority-opt active" data-priority="gusto">Gusto</button>
+            <button class="priority-opt" data-priority="capricho">Capricho</button>
+          </div>
+        </div>
+        <button class="sbtn sbtn-primary" id="add-btn">Agregar</button>
+        <button class="sbtn sbtn-secondary" id="add-close-btn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHEET: Budget -->
+  <div class="sheet-overlay" id="budget-sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">Presupuesto Del Carrito</div>
+        <button class="sheet-close" id="budget-sheet-close">✕</button>
+      </div>
+      <div class="sheet-body">
+        <p class="sheet-context" id="budget-sheet-context"></p>
+        <div class="form-group">
+          <label for="budget-input">Presupuesto Total (CLP)</label>
+          <input type="number" id="budget-input" placeholder="Ej: 100000"
+                 min="1" step="1" inputmode="numeric" />
+        </div>
+        <button class="sbtn sbtn-primary" id="budget-save-btn">Guardar</button>
+        <button class="sbtn sbtn-danger" id="budget-remove-btn" style="display:none">Quitar Presupuesto</button>
+        <button class="sbtn sbtn-secondary" id="budget-cancel-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHEET: Move -->
+  <div class="sheet-overlay" id="move-sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">Mover A...</div>
+        <button class="sheet-close" id="move-sheet-close">✕</button>
+      </div>
+      <div class="sheet-body" id="move-sheet-body"></div>
+    </div>
+  </div>
+
+  <!-- SHEET: New Board -->
+  <div class="sheet-overlay" id="board-sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">Nuevo Tablero</div>
+        <button class="sheet-close" id="board-sheet-close">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="form-group">
+          <label for="board-name-input">Nombre Del Tablero</label>
+          <input type="text" id="board-name-input" placeholder="Ej: Gastos Del Mes"
+                 maxlength="40" autocapitalize="sentences" />
+        </div>
+        <div id="import-section"></div>
+        <button class="sbtn sbtn-primary" id="board-save-btn">Crear Tablero</button>
+        <button class="sbtn sbtn-secondary" id="board-cancel-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIG =====
+    const COLUMNS = [
+      { id: 'por_pagar', title: 'Por Pagar' },
+      { id: 'carrito',   title: 'Carrito'   },
+      { id: 'pagado',    title: 'Pagado'    },
+    ];
+    const PRIORITY_LABELS = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
+    const BOARD_COLORS    = ['#0052cc','#00875a','#de350b','#6554c0','#d29034','#00aecc','#cd5a91','#172b4d'];
+    const COL_COLORS      = { por_pagar: '#ff991f', carrito: '#0079bf', pagado: '#36b37e' };
+    const PRI_COLORS      = { vital: '#de350b', gusto: '#0079bf', capricho: '#6554c0' };
+
+    let currentUser = null;
+    let currentBoard = null;
+    let boards = [];
+    let expenses = [];
+    let budget = 0;
+    let activeTab = 'por_pagar';
+    let addingToColumn = null;
+    let movingExpenseId = null;
+    let importableBoardExpenses = [];
+
+    // ===== STORAGE =====
+    function loadBoards() {
+      const raw = localStorage.getItem('tableros_' + currentUser);
+      if (raw) { boards = JSON.parse(raw); return; }
+      const oldExp = localStorage.getItem('cuentas_' + currentUser);
+      if (oldExp) {
+        const bid = 'b' + Date.now();
+        boards = [{ id: bid, name: 'Mi Tablero' }];
+        localStorage.setItem('cuentas_' + currentUser + '_' + bid, oldExp);
+        localStorage.removeItem('cuentas_' + currentUser);
+        const oldBudget = localStorage.getItem('presupuesto_' + currentUser);
+        if (oldBudget) {
+          localStorage.setItem('presupuesto_' + currentUser + '_' + bid, oldBudget);
+          localStorage.removeItem('presupuesto_' + currentUser);
+        }
+      } else { boards = []; }
+      saveBoards();
+    }
+    function saveBoards() { localStorage.setItem('tableros_' + currentUser, JSON.stringify(boards)); }
+    function loadExpenses() {
+      const raw = localStorage.getItem('cuentas_' + currentUser + '_' + currentBoard.id);
+      expenses = raw ? JSON.parse(raw) : [];
+    }
+    function saveExpenses() {
+      localStorage.setItem('cuentas_' + currentUser + '_' + currentBoard.id, JSON.stringify(expenses));
+    }
+    function loadBudget() {
+      budget = parseInt(localStorage.getItem('presupuesto_' + currentUser + '_' + currentBoard.id) || '0', 10);
+    }
+    function saveBudget() {
+      localStorage.setItem('presupuesto_' + currentUser + '_' + currentBoard.id, String(budget));
+    }
+
+    // ===== UTILS =====
+    function formatCLP(n) {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
+    }
+    function escapeHTML(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function setView(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    function openSheet(id)  { document.getElementById(id).classList.add('active'); }
+    function closeSheet(id) { document.getElementById(id).classList.remove('active'); }
+
+    document.querySelectorAll('.sheet-overlay').forEach(o => {
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+    });
+
+    // ===== RENDER BOARD =====
+    function renderActiveTab() {
+      const content = document.getElementById('tab-content');
+      const summary = document.getElementById('col-summary');
+      const fab = document.getElementById('fab');
+
+      updateTabBar();
+
+      if (activeTab === 'analytics') {
+        fab.style.display = 'none';
+        const total = expenses.reduce((s, e) => s + e.monto, 0);
+        summary.innerHTML = `
+          <div class="col-summary-title">Total General</div>
+          <div class="col-summary-total">${formatCLP(total)}</div>
+        `;
+        content.innerHTML = analyticsHTML();
+        requestAnimationFrame(() => { drawColumnCharts(); drawChartColumnas(); });
+        return;
+      }
+
+      fab.style.display = 'flex';
+      const col = COLUMNS.find(c => c.id === activeTab);
+      const colExpenses = expenses.filter(e => e.estado === activeTab);
+      const total = colExpenses.reduce((s, e) => s + e.monto, 0);
+
+      summary.innerHTML = `
+        <div class="col-summary-title">${col.title}</div>
+        <div class="col-summary-total">${formatCLP(total)}</div>
+        ${activeTab === 'carrito' ? `<div class="col-budget" id="col-budget">${carritoHeaderHTML(total)}</div>` : ''}
+      `;
+
+      if (activeTab === 'carrito') {
+        const budgetEl = document.getElementById('col-budget');
+        if (budgetEl) budgetEl.addEventListener('click', openBudgetSheet);
+      }
+
+      if (colExpenses.length === 0) {
+        const icons = { por_pagar: '📋', carrito: '🛒', pagado: '✅' };
+        content.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">${icons[activeTab]}</div>
+            <div class="empty-state-text">Sin Gastos Aquí</div>
+            <div class="empty-state-sub">Toca + para agregar</div>
+          </div>
+        `;
+      } else {
+        content.innerHTML = colExpenses.map(cardHTML).join('');
+        content.querySelectorAll('.mob-card-delete').forEach(btn => {
+          btn.addEventListener('click', () => deleteExpense(btn.dataset.id));
+        });
+        content.querySelectorAll('.mob-card-move').forEach(btn => {
+          btn.addEventListener('click', () => openMoveSheet(btn.dataset.id));
+        });
+      }
+    }
+
+    function updateTabBar() {
+      document.querySelectorAll('.tab-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === activeTab);
+      });
+    }
+
+    function carritoHeaderHTML(spent) {
+      if (!budget) {
+        return `
+          <div class="budget-empty">
+            <div class="budget-empty-icon">💰</div>
+            <div>
+              <div class="budget-empty-title">Definir Presupuesto</div>
+              <div class="budget-empty-sub">¿Cuánto tienes disponible para gastar?</div>
+            </div>
+          </div>
+        `;
+      }
+      const remaining = budget - spent;
+      const over = spent > budget;
+      const pct = over ? 0 : Math.max((remaining / budget) * 100, 0);
+      let barColor, textColor;
+      if (over)        { barColor = '#de350b'; textColor = '#ffccc2'; }
+      else if (pct <= 10) { barColor = '#ff5630'; textColor = '#ffceba'; }
+      else if (pct <= 30) { barColor = '#ff991f'; textColor = '#ffe5a0'; }
+      else               { barColor = '#36b37e'; textColor = '#b3f5d4'; }
+      const label = over
+        ? `⚠ Excedido Por ${formatCLP(Math.abs(remaining))}`
+        : `${formatCLP(remaining)} Disponible`;
+      return `
+        <div class="budget-bar-wrap">
+          <div class="budget-bar-label-row">
+            <span class="budget-bar-label-left">Presupuesto</span>
+            <span class="budget-bar-label-right">Gastado ${formatCLP(spent)} / ${formatCLP(budget)}</span>
+          </div>
+          <div class="budget-bar-track">
+            <div class="budget-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+          </div>
+          <div class="budget-meta">
+            <span class="budget-remaining" style="color:${textColor}">${label}</span>
+            <span class="budget-edit-hint">✎ Editar</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function cardHTML(e) {
+      const pri = e.prioridad || 'gusto';
+      return `
+        <div class="mob-card">
+          <div class="mob-card-top">
+            <div class="mob-card-priority-bar" style="background:${PRI_COLORS[pri]}"></div>
+            <div class="mob-card-title">${escapeHTML(e.titulo)}</div>
+          </div>
+          <div class="mob-card-footer">
+            <div class="mob-card-left">
+              <span class="priority-badge ${pri}">${PRIORITY_LABELS[pri]}</span>
+              <span class="mob-card-amount">${formatCLP(e.monto)}</span>
+            </div>
+            <div class="mob-card-actions">
+              <button class="mob-card-move" data-id="${e.id}">Mover →</button>
+              <button class="mob-card-delete" data-id="${e.id}">✕</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function analyticsHTML() {
+      return `
+        <div class="analytics-block">
+          <div class="analytics-block-title">Distribución Por Tipo</div>
+          <div class="charts-row">
+            <canvas id="chart-col-por_pagar" class="analytics-canvas" height="170"></canvas>
+            <canvas id="chart-col-carrito"   class="analytics-canvas" height="170"></canvas>
+            <canvas id="chart-col-pagado"    class="analytics-canvas" height="170"></canvas>
+          </div>
+          <div class="chart-divider"></div>
+          <div class="analytics-block-title">Total Por Columna</div>
+          <canvas id="chart-columnas" class="analytics-canvas" height="130"></canvas>
+          <div class="chart-divider"></div>
+          <div class="analytics-block-title">Guía De Prioridades</div>
+          <div class="priority-guide">
+            <div class="priority-guide-item">
+              <div class="priority-guide-dot" style="background:#de350b"></div>
+              <div><div class="priority-guide-name">Vital</div><div class="priority-guide-desc">Sin esto, el mundo se detiene.</div></div>
+            </div>
+            <div class="priority-guide-item">
+              <div class="priority-guide-dot" style="background:#0079bf"></div>
+              <div><div class="priority-guide-name">Gusto</div><div class="priority-guide-desc">Lo que mantiene tu ritmo de vida.</div></div>
+            </div>
+            <div class="priority-guide-item">
+              <div class="priority-guide-dot" style="background:#6554c0"></div>
+              <div><div class="priority-guide-name">Capricho</div><div class="priority-guide-desc">Innecesario, pero te saca una sonrisa.</div></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ===== CHARTS =====
+    function initCanvas(id) {
+      const canvas = document.getElementById(id);
+      if (!canvas) return null;
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.offsetWidth || 100;
+      const H = parseInt(canvas.getAttribute('height')) || 100;
+      canvas.style.height = H + 'px';
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, W, H);
+      return { ctx, W, H };
+    }
+
+    function drawColumnCharts() {
+      COLUMNS.forEach(col => drawMiniDonut('chart-col-' + col.id, col.title, col.id));
+    }
+
+    function drawMiniDonut(canvasId, colTitle, colId) {
+      const c = initCanvas(canvasId);
+      if (!c) return;
+      const { ctx, W, H } = c;
+      const COLORS = { vital: '#de350b', gusto: '#0079bf', capricho: '#6554c0' };
+      const LBLS   = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
+      const items  = expenses.filter(e => e.estado === colId);
+      const totals = { vital: 0, gusto: 0, capricho: 0 };
+      items.forEach(e => { totals[e.prioridad || 'gusto'] += e.monto; });
+      const grand = totals.vital + totals.gusto + totals.capricho;
+
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = '600 11px -apple-system,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(colTitle, W / 2, 13);
+
+      const cx = W / 2, cy = 58;
+      const outerR = Math.min(W / 2 - 4, 32);
+      const innerR = Math.round(outerR * 0.56);
+
+      if (grand === 0) {
+        ctx.beginPath(); ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fill();
+        ctx.beginPath(); ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('Sin Gastos', cx, cy + outerR + 14);
+        return;
+      }
+
+      const entries = Object.entries(totals).filter(([, v]) => v > 0);
+      let angle = -Math.PI / 2;
+      entries.forEach(([key, val]) => {
+        const sweep = (val / grand) * Math.PI * 2;
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, outerR, angle, angle + sweep);
+        ctx.closePath(); ctx.fillStyle = COLORS[key]; ctx.fill();
+        angle += sweep;
+      });
+
+      angle = -Math.PI / 2;
+      entries.forEach(([, val]) => {
+        const sweep = (val / grand) * Math.PI * 2;
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * outerR, cy + Math.sin(angle) * outerR);
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+        angle += sweep;
+      });
+
+      ctx.beginPath(); ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fill();
+
+      const legendY = cy + outerR + 14;
+      const rowH = 17;
+      entries.forEach(([key, val], i) => {
+        const y = legendY + i * rowH;
+        const pct = Math.round((val / grand) * 100);
+        ctx.beginPath(); ctx.arc(6, y - 3, 4, 0, Math.PI * 2);
+        ctx.fillStyle = COLORS[key]; ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.font = '600 10px sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText(`${LBLS[key]}  ${pct}%`, 14, y);
+      });
+    }
+
+    function drawChartColumnas() {
+      const c = initCanvas('chart-columnas');
+      if (!c) return;
+      const { ctx, W, H } = c;
+      const data = COLUMNS.map(col => ({
+        id: col.id, label: col.id === 'por_pagar' ? 'Por Pagar' : col.id === 'carrito' ? 'Carrito' : 'Pagado',
+        color: COL_COLORS[col.id],
+        total: expenses.filter(e => e.estado === col.id).reduce((s, e) => s + e.monto, 0),
+      }));
+      const grand = data.reduce((s, d) => s + d.total, 0);
+      const barH = 9, rowH = 38;
+      const startY = (H - data.length * rowH) / 2 + 2;
+      data.forEach((d, i) => {
+        const y = startY + i * rowH;
+        const fill = Math.round((grand > 0 ? d.total / grand : 0) * W);
+        ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillText(d.label, 0, y + 12);
+        ctx.font = '600 11px sans-serif'; ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.fillText(formatCLP(d.total), W, y + 12);
+        ctx.beginPath(); ctx.roundRect(0, y + 18, W, barH, 3);
+        ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fill();
+        if (fill > 0) {
+          ctx.beginPath(); ctx.roundRect(0, y + 18, fill, barH, 3);
+          ctx.fillStyle = d.color; ctx.fill();
+        }
+      });
+    }
+
+    // ===== CRUD =====
+    function deleteExpense(id) {
+      if (!confirm('¿Eliminar Este Gasto?')) return;
+      expenses = expenses.filter(e => e.id !== id);
+      saveExpenses(); renderActiveTab();
+    }
+    function addExpense(titulo, monto, estado, prioridad) {
+      expenses.push({ id: Date.now().toString(), titulo, monto, estado, prioridad });
+      saveExpenses(); renderActiveTab();
+    }
+    function moveExpense(id, targetColId) {
+      const exp = expenses.find(e => e.id === id);
+      if (exp && exp.estado !== targetColId) {
+        exp.estado = targetColId; saveExpenses(); renderActiveTab();
+      }
+    }
+
+    // ===== FAB =====
+    document.getElementById('fab').addEventListener('click', () => openAddSheet(activeTab));
+
+    // ===== TAB BAR =====
+    document.getElementById('tab-bar').addEventListener('click', e => {
+      const btn = e.target.closest('.tab-item');
+      if (!btn) return;
+      activeTab = btn.dataset.tab;
+      renderActiveTab();
+    });
+
+    // ===== ADD SHEET =====
+    function openAddSheet(colId) {
+      addingToColumn = colId;
+      document.getElementById('add-titulo').value = '';
+      document.getElementById('add-monto').value = '';
+      document.getElementById('add-titulo').classList.remove('error');
+      document.getElementById('add-monto').classList.remove('error');
+      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+      document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
+      openSheet('add-sheet-overlay');
+      setTimeout(() => document.getElementById('add-titulo').focus(), 350);
+    }
+    function closeAddSheet() { closeSheet('add-sheet-overlay'); }
+
+    document.getElementById('add-sheet-close').addEventListener('click', closeAddSheet);
+    document.getElementById('add-close-btn').addEventListener('click', closeAddSheet);
+
+    document.getElementById('add-btn').addEventListener('click', () => {
+      const tit = document.getElementById('add-titulo');
+      const mon = document.getElementById('add-monto');
+      const titulo = tit.value.trim();
+      const monto  = parseInt(mon.value, 10);
+      let valid = true;
+      if (!titulo) { tit.classList.add('error'); tit.focus(); valid = false; }
+      else tit.classList.remove('error');
+      if (isNaN(monto) || monto < 0 || mon.value === '') {
+        mon.classList.add('error'); if (valid) mon.focus(); valid = false;
+      } else mon.classList.remove('error');
+      if (!valid) return;
+      addExpense(titulo, monto, addingToColumn, selectedPriority());
+      tit.value = ''; mon.value = '';
+      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+      document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
+      tit.focus();
+    });
+
+    document.getElementById('priority-selector').addEventListener('click', e => {
+      const btn = e.target.closest('.priority-opt');
+      if (!btn) return;
+      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+
+    function selectedPriority() {
+      const a = document.querySelector('.priority-opt.active');
+      return a ? a.dataset.priority : 'gusto';
+    }
+
+    // ===== BUDGET SHEET =====
+    function openBudgetSheet() {
+      const spent = expenses.filter(e => e.estado === 'carrito').reduce((s, e) => s + e.monto, 0);
+      const ctx2 = document.getElementById('budget-sheet-context');
+      const removeBtn = document.getElementById('budget-remove-btn');
+      if (budget > 0) {
+        ctx2.textContent = `Actualmente tienes ${formatCLP(spent)} gastados de ${formatCLP(budget)}.`;
+        removeBtn.style.display = '';
+      } else {
+        ctx2.textContent = '¿Cuánto dinero tienes disponible para gastar en el carrito?';
+        removeBtn.style.display = 'none';
+      }
+      document.getElementById('budget-input').value = budget > 0 ? budget : '';
+      document.getElementById('budget-input').classList.remove('error');
+      openSheet('budget-sheet-overlay');
+      setTimeout(() => document.getElementById('budget-input').focus(), 350);
+    }
+    function closeBudgetSheet() { closeSheet('budget-sheet-overlay'); }
+
+    document.getElementById('budget-sheet-close').addEventListener('click', closeBudgetSheet);
+    document.getElementById('budget-cancel-btn').addEventListener('click', closeBudgetSheet);
+    document.getElementById('budget-save-btn').addEventListener('click', () => {
+      const val = parseInt(document.getElementById('budget-input').value, 10);
+      if (isNaN(val) || val < 1) {
+        document.getElementById('budget-input').classList.add('error');
+        document.getElementById('budget-input').focus(); return;
+      }
+      budget = val; saveBudget(); closeBudgetSheet(); renderActiveTab();
+    });
+    document.getElementById('budget-remove-btn').addEventListener('click', () => {
+      budget = 0; saveBudget(); closeBudgetSheet(); renderActiveTab();
+    });
+    document.getElementById('budget-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('budget-save-btn').click();
+    });
+
+    // ===== MOVE SHEET =====
+    function openMoveSheet(expenseId) {
+      movingExpenseId = expenseId;
+      const exp = expenses.find(e => e.id === expenseId);
+      if (!exp) return;
+      const body = document.getElementById('move-sheet-body');
+      body.innerHTML = `
+        <div class="move-info">
+          <strong style="color:#172b4d">${escapeHTML(exp.titulo)}</strong><br>${formatCLP(exp.monto)}
+        </div>
+        ${COLUMNS.map(col => `
+          <button class="move-col-btn ${col.id === exp.estado ? 'current' : ''}" data-target="${col.id}">
+            <div class="move-col-dot" style="background:${COL_COLORS[col.id]}"></div>
+            ${col.title}
+            ${col.id === exp.estado ? '<span class="move-col-current-tag">Actual</span>' : ''}
+          </button>
+        `).join('')}
+        <button class="sbtn sbtn-secondary" id="move-cancel-btn">Cancelar</button>
+      `;
+      body.querySelectorAll('.move-col-btn:not(.current)').forEach(btn => {
+        btn.addEventListener('click', () => {
+          moveExpense(movingExpenseId, btn.dataset.target);
+          closeMoveSheet();
+        });
+      });
+      body.querySelector('#move-cancel-btn').addEventListener('click', closeMoveSheet);
+      openSheet('move-sheet-overlay');
+    }
+    function closeMoveSheet() { closeSheet('move-sheet-overlay'); movingExpenseId = null; }
+    document.getElementById('move-sheet-close').addEventListener('click', closeMoveSheet);
+
+    // ===== BOARD SHEET =====
+    function openBoardSheet() {
+      document.getElementById('board-name-input').value = '';
+      document.getElementById('board-name-input').classList.remove('error');
+      importableBoardExpenses = [];
+      boards.forEach(b => {
+        const stored = localStorage.getItem('cuentas_' + currentUser + '_' + b.id);
+        const exps = stored ? JSON.parse(stored) : [];
+        if (exps.length) importableBoardExpenses.push({ board: b, expenses: exps });
+      });
+      const sec = document.getElementById('import-section');
+      if (importableBoardExpenses.length) {
+        sec.innerHTML = `
+          <div class="import-divider"></div>
+          <span class="import-section-label">Importar Gastos (Opcional)</span>
+          ${importableBoardExpenses.map(({ board, expenses: exps }, bi) => `
+            <div class="import-board-group">
+              <div class="import-board-name">${escapeHTML(board.name)}</div>
+              <div class="import-expense-list">
+                ${exps.map((e, ei) => `
+                  <label class="import-expense-item">
+                    <input type="checkbox" class="import-expense-check" data-bi="${bi}" data-ei="${ei}" />
+                    <span class="import-expense-name">${escapeHTML(e.titulo)}</span>
+                    <span class="priority-badge ${e.prioridad||'gusto'}">${PRIORITY_LABELS[e.prioridad||'gusto']}</span>
+                    <span class="import-expense-amount">${formatCLP(e.monto)}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+          <div style="height:8px"></div>
+        `;
+        sec.querySelectorAll('.import-expense-item').forEach(item => {
+          item.addEventListener('change', () => {
+            item.classList.toggle('selected', item.querySelector('input').checked);
+          });
+        });
+      } else {
+        sec.innerHTML = '';
+      }
+      openSheet('board-sheet-overlay');
+      setTimeout(() => document.getElementById('board-name-input').focus(), 350);
+    }
+    function closeBoardSheet() { closeSheet('board-sheet-overlay'); }
+    document.getElementById('board-sheet-close').addEventListener('click', closeBoardSheet);
+    document.getElementById('board-cancel-btn').addEventListener('click', closeBoardSheet);
+    document.getElementById('board-save-btn').addEventListener('click', () => {
+      const input = document.getElementById('board-name-input');
+      const name = input.value.trim();
+      if (!name) { input.classList.add('error'); input.focus(); return; }
+      const board = { id: 'b' + Date.now(), name };
+      boards.push(board); saveBoards();
+      const checked = document.querySelectorAll('.import-expense-check:checked');
+      if (checked.length) {
+        const cloned = Array.from(checked).map((cb, i) => {
+          const src = importableBoardExpenses[+cb.dataset.bi].expenses[+cb.dataset.ei];
+          return { id: 'c' + Date.now() + i, titulo: src.titulo, monto: src.monto,
+                   prioridad: src.prioridad || 'gusto', estado: 'por_pagar' };
+        });
+        localStorage.setItem('cuentas_' + currentUser + '_' + board.id, JSON.stringify(cloned));
+      }
+      closeBoardSheet(); renderBoards();
+    });
+    document.getElementById('board-name-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('board-save-btn').click();
+    });
+
+    // ===== BOARDS =====
+    function renderBoards() {
+      document.getElementById('boards-user-badge').textContent = currentUser;
+      const list = document.getElementById('boards-list');
+      list.innerHTML = boards.map((b, i) => {
+        const color = BOARD_COLORS[i % BOARD_COLORS.length];
+        const stored = localStorage.getItem('cuentas_' + currentUser + '_' + b.id);
+        const count = stored ? JSON.parse(stored).length : 0;
+        return `
+          <div class="board-item" data-board-id="${b.id}">
+            <div class="board-item-stripe" style="background:${color}"></div>
+            <div class="board-item-body">
+              <div class="board-item-name">${escapeHTML(b.name)}</div>
+              <div class="board-item-meta">${count} ${count === 1 ? 'Gasto' : 'Gastos'}</div>
+            </div>
+            <button class="board-item-delete" data-board-id="${b.id}">✕</button>
+            <span class="board-item-arrow">›</span>
+          </div>
+        `;
+      }).join('') + `
+        <div style="height:10px"></div>
+        <button class="board-new-btn" id="new-board-btn">
+          <span>+</span> Nuevo Tablero
+        </button>
+      `;
+      list.querySelectorAll('.board-item').forEach(item => {
+        item.addEventListener('click', e => {
+          if (e.target.closest('.board-item-delete')) return;
+          const b = boards.find(b => b.id === item.dataset.boardId);
+          if (b) enterBoard(b);
+        });
+      });
+      list.querySelectorAll('.board-item-delete').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation(); deleteBoardById(btn.dataset.boardId);
+        });
+      });
+      document.getElementById('new-board-btn').addEventListener('click', openBoardSheet);
+    }
+
+    function enterBoard(board) {
+      currentBoard = board;
+      activeTab = 'por_pagar';
+      document.getElementById('header-board-name').textContent = board.name;
+      loadExpenses(); loadBudget();
+      setView('board-view');
+      renderActiveTab();
+    }
+
+    function backToBoards() {
+      currentBoard = null; expenses = []; budget = 0;
+      setView('boards-view'); renderBoards();
+    }
+
+    function deleteBoardById(boardId) {
+      const board = boards.find(b => b.id === boardId);
+      if (!board) return;
+      if (!confirm(`¿Eliminar El Tablero "${board.name}" Y Todos Sus Gastos?`)) return;
+      boards = boards.filter(b => b.id !== boardId);
+      localStorage.removeItem('cuentas_' + currentUser + '_' + boardId);
+      localStorage.removeItem('presupuesto_' + currentUser + '_' + boardId);
+      saveBoards(); renderBoards();
+    }
+
+    document.getElementById('back-btn').addEventListener('click', backToBoards);
+    document.getElementById('boards-logout-btn').addEventListener('click', logout);
+    document.getElementById('logout-btn').addEventListener('click', logout);
+
+    // ===== USERS =====
+    function getStoredUsers() {
+      const users = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('tableros_')) users.push(k.slice('tableros_'.length));
+      }
+      return users.sort((a, b) => a.localeCompare(b));
+    }
+    function avatarColor(name) {
+      const colors = ['#0079bf','#d29034','#519839','#b04632','#89609e','#cd5a91','#4bbf6b','#00aecc'];
+      let h = 0;
+      for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+      return colors[Math.abs(h) % colors.length];
+    }
+    function initials(name) {
+      return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    }
+    function renderUserList() {
+      const users = getStoredUsers();
+      const sec = document.getElementById('users-section');
+      const list = document.getElementById('users-list');
+      if (!users.length) { sec.style.display = 'none'; return; }
+      sec.style.display = '';
+      list.innerHTML = users.map(u => `
+        <button class="user-item" data-username="${escapeHTML(u)}">
+          <div class="user-avatar" style="background:${avatarColor(u)}">${initials(u)}</div>
+          <span class="user-name">${escapeHTML(u)}</span>
+          <span class="user-item-arrow">›</span>
+          <span class="user-delete-btn" data-username="${escapeHTML(u)}">✕</span>
+        </button>
+      `).join('');
+      list.querySelectorAll('.user-item').forEach(btn => {
+        btn.addEventListener('click', () => login(btn.dataset.username));
+      });
+      list.querySelectorAll('.user-delete-btn').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); deleteUser(btn.dataset.username); });
+      });
+    }
+    function deleteUser(username) {
+      if (!confirm(`¿Eliminar El Usuario "${username}" Y Todos Sus Datos?`)) return;
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k === 'tableros_' + username ||
+                  k.startsWith('cuentas_' + username + '_') ||
+                  k.startsWith('presupuesto_' + username + '_'))) keys.push(k);
+      }
+      keys.forEach(k => localStorage.removeItem(k));
+      renderUserList();
+    }
+
+    // ===== LOGIN =====
+    function login(username) {
+      currentUser = username.trim();
+      sessionStorage.setItem('currentUser', currentUser);
+      document.getElementById('boards-user-badge').textContent = currentUser;
+      loadBoards();
+      setView('boards-view');
+      renderBoards();
+    }
+    function logout() {
+      sessionStorage.removeItem('currentUser');
+      currentUser = null; currentBoard = null; boards = []; expenses = []; budget = 0;
+      document.getElementById('username-input').value = '';
+      setView('login-view');
+      renderUserList();
+    }
+
+    document.getElementById('login-btn').addEventListener('click', () => {
+      const u = document.getElementById('username-input').value.trim();
+      if (u) login(u); else document.getElementById('username-input').focus();
+    });
+    document.getElementById('username-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('login-btn').click();
+    });
+
+    // ===== INIT =====
+    renderUserList();
+    const savedUser = sessionStorage.getItem('currentUser');
+    if (savedUser) login(savedUser);
+  </script>
+</body>
+</html>
