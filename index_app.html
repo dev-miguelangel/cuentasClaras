@@ -849,6 +849,7 @@
     let movingExpenseId = null;
     let editingId = null;
     let importableBoardExpenses = [];
+    var _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
 
     // ===== STORAGE =====
     function loadBoards() {
@@ -1650,8 +1651,6 @@
     }
 
     // ===== FEEDBACK =====
-    var _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
-
     function fbRate(cat, val) {
       _fbScores[cat] = _fbScores[cat] === val ? 0 : val;
       document.querySelectorAll('#fb-' + cat + ' .fb-star').forEach(function(s, i) {
