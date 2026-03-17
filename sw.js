@@ -1,8 +1,8 @@
 const CACHE = 'cuentasrapidas-v1';
 const ASSETS = [
   '/index.html',
+  '/index_pc.html',
   '/index_app.html',
-  '/landingpage.html',
   '/manifest.json',
   '/manifest-app.json',
   '/icon.svg',
