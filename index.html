@@ -1551,36 +1551,37 @@
           <div class="fb-row">
             <span class="fb-row-label">Utilidad</span>
             <div class="fb-stars" id="fb-utilidad">
-              <span class="fb-star" data-v="1">★</span>
-              <span class="fb-star" data-v="2">★</span>
-              <span class="fb-star" data-v="3">★</span>
-              <span class="fb-star" data-v="4">★</span>
-              <span class="fb-star" data-v="5">★</span>
+              <span class="fb-star" onclick="fbRate('utilidad',1)">★</span>
+              <span class="fb-star" onclick="fbRate('utilidad',2)">★</span>
+              <span class="fb-star" onclick="fbRate('utilidad',3)">★</span>
+              <span class="fb-star" onclick="fbRate('utilidad',4)">★</span>
+              <span class="fb-star" onclick="fbRate('utilidad',5)">★</span>
             </div>
           </div>
           <div class="fb-row">
             <span class="fb-row-label">Usabilidad</span>
             <div class="fb-stars" id="fb-usabilidad">
-              <span class="fb-star" data-v="1">★</span>
-              <span class="fb-star" data-v="2">★</span>
-              <span class="fb-star" data-v="3">★</span>
-              <span class="fb-star" data-v="4">★</span>
-              <span class="fb-star" data-v="5">★</span>
+              <span class="fb-star" onclick="fbRate('usabilidad',1)">★</span>
+              <span class="fb-star" onclick="fbRate('usabilidad',2)">★</span>
+              <span class="fb-star" onclick="fbRate('usabilidad',3)">★</span>
+              <span class="fb-star" onclick="fbRate('usabilidad',4)">★</span>
+              <span class="fb-star" onclick="fbRate('usabilidad',5)">★</span>
             </div>
           </div>
           <div class="fb-row">
             <span class="fb-row-label">Funcionalidades</span>
             <div class="fb-stars" id="fb-funcionalidades">
-              <span class="fb-star" data-v="1">★</span>
-              <span class="fb-star" data-v="2">★</span>
-              <span class="fb-star" data-v="3">★</span>
-              <span class="fb-star" data-v="4">★</span>
-              <span class="fb-star" data-v="5">★</span>
+              <span class="fb-star" onclick="fbRate('funcionalidades',1)">★</span>
+              <span class="fb-star" onclick="fbRate('funcionalidades',2)">★</span>
+              <span class="fb-star" onclick="fbRate('funcionalidades',3)">★</span>
+              <span class="fb-star" onclick="fbRate('funcionalidades',4)">★</span>
+              <span class="fb-star" onclick="fbRate('funcionalidades',5)">★</span>
             </div>
           </div>
           <div class="fb-message-group">
             <label for="fb-mensaje">Mensaje</label>
-            <textarea class="fb-textarea" id="fb-mensaje" placeholder="Escribe tu comentario aquí..." maxlength="100"></textarea>
+            <textarea class="fb-textarea" id="fb-mensaje" placeholder="Escribe tu comentario aquí..." maxlength="100"
+              oninput="document.getElementById('fb-char-num').textContent=this.value.length"></textarea>
             <div class="fb-char-count"><span id="fb-char-num">0</span>/100</div>
           </div>
           <button class="fb-submit" onclick="submitFeedback()">Enviar Feedback →</button>
@@ -1631,32 +1632,22 @@
 
   <script>
     // ===== FEEDBACK =====
-    const _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
+    var _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
 
-    ['utilidad', 'usabilidad', 'funcionalidades'].forEach(cat => {
-      const container = document.getElementById('fb-' + cat);
-      container.querySelectorAll('.fb-star').forEach(star => {
-        star.addEventListener('click', () => {
-          const val = parseInt(star.dataset.v);
-          _fbScores[cat] = _fbScores[cat] === val ? 0 : val;
-          container.querySelectorAll('.fb-star').forEach(s => {
-            s.classList.toggle('active', parseInt(s.dataset.v) <= _fbScores[cat]);
-          });
-        });
+    function fbRate(cat, val) {
+      _fbScores[cat] = _fbScores[cat] === val ? 0 : val;
+      document.querySelectorAll('#fb-' + cat + ' .fb-star').forEach(function(s, i) {
+        s.classList.toggle('active', i < _fbScores[cat]);
       });
-    });
-
-    document.getElementById('fb-mensaje').addEventListener('input', function () {
-      document.getElementById('fb-char-num').textContent = this.value.length;
-    });
+    }
 
     function submitFeedback() {
-      const msg = document.getElementById('fb-mensaje').value.trim();
-      const subject = encodeURIComponent('Feedback CuentasRápidas – Landing');
-      const body = encodeURIComponent(
-        `Utilidad: ${_fbScores.utilidad}/5\nUsabilidad: ${_fbScores.usabilidad}/5\nFuncionalidades: ${_fbScores.funcionalidades}/5\n\n${msg}`
+      var msg = document.getElementById('fb-mensaje').value.trim();
+      var subject = encodeURIComponent('Feedback CuentasRápidas – Landing');
+      var body = encodeURIComponent(
+        'Utilidad: ' + _fbScores.utilidad + '/5\nUsabilidad: ' + _fbScores.usabilidad + '/5\nFuncionalidades: ' + _fbScores.funcionalidades + '/5\n\n' + msg
       );
-      window.open(`mailto:dev.miguelangel.jaimen@gmail.com?subject=${subject}&body=${body}`);
+      window.open('mailto:dev.miguelangel.jaimen@gmail.com?subject=' + subject + '&body=' + body);
     }
   </script>
 
