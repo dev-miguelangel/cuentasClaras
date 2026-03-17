@@ -1024,6 +1024,114 @@
     .mt-24 {
       margin-top: 24px;
     }
+
+    /* ===== FEEDBACK SECTION ===== */
+    .feedback-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 560px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-md);
+      border: 1.5px solid var(--border);
+    }
+
+    .fb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .fb-row:last-of-type { border-bottom: none; }
+
+    .fb-row-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-mid);
+    }
+
+    .fb-stars {
+      display: flex;
+      gap: 4px;
+    }
+
+    .fb-star {
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--border);
+      transition: color 0.1s, transform 0.1s;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .fb-star:hover { transform: scale(1.15); }
+    .fb-star.active { color: #f5a623; }
+
+    .fb-message-group {
+      margin-top: 22px;
+    }
+
+    .fb-message-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .fb-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      resize: none;
+      height: 90px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .fb-textarea:focus { border-color: var(--blue); }
+
+    .fb-char-count {
+      font-size: 12px;
+      color: var(--text-faint);
+      text-align: right;
+      margin-top: 5px;
+    }
+
+    .fb-submit {
+      display: block;
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .fb-submit:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .fb-submit:active { transform: translateY(0); }
+
+    .fb-success {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+      color: var(--green);
+      font-size: 16px;
+      font-weight: 600;
+    }
   </style>
 </head>
 
@@ -1042,6 +1150,7 @@
             <a href="#funciones" class="nav-link" role="listitem">Funciones</a>
             <a href="#como-funciona" class="nav-link" role="listitem">Cómo Funciona</a>
             <a href="#prioridades" class="nav-link" role="listitem">Prioridades</a>
+            <a href="#feedback" class="nav-link" role="listitem">Feedback</a>
             <a href="#demo" class="nav-cta" role="listitem">Probar Gratis</a>
           </div>
         </div>
@@ -1429,6 +1538,56 @@
       </div>
     </section>
 
+    <!-- ===== FEEDBACK ===== -->
+    <section class="section" id="feedback" aria-labelledby="feedback-heading">
+      <div class="container">
+        <header class="section-header center">
+          <p class="section-label">Feedback</p>
+          <h2 class="section-title" id="feedback-heading">¿Qué te pareció?</h2>
+          <p class="section-sub center">Tu opinión nos ayuda a mejorar. Solo toma 30 segundos.</p>
+        </header>
+
+        <div class="feedback-card">
+          <div class="fb-row">
+            <span class="fb-row-label">Utilidad</span>
+            <div class="fb-stars" id="fb-utilidad">
+              <span class="fb-star" data-v="1">★</span>
+              <span class="fb-star" data-v="2">★</span>
+              <span class="fb-star" data-v="3">★</span>
+              <span class="fb-star" data-v="4">★</span>
+              <span class="fb-star" data-v="5">★</span>
+            </div>
+          </div>
+          <div class="fb-row">
+            <span class="fb-row-label">Usabilidad</span>
+            <div class="fb-stars" id="fb-usabilidad">
+              <span class="fb-star" data-v="1">★</span>
+              <span class="fb-star" data-v="2">★</span>
+              <span class="fb-star" data-v="3">★</span>
+              <span class="fb-star" data-v="4">★</span>
+              <span class="fb-star" data-v="5">★</span>
+            </div>
+          </div>
+          <div class="fb-row">
+            <span class="fb-row-label">Funcionalidades</span>
+            <div class="fb-stars" id="fb-funcionalidades">
+              <span class="fb-star" data-v="1">★</span>
+              <span class="fb-star" data-v="2">★</span>
+              <span class="fb-star" data-v="3">★</span>
+              <span class="fb-star" data-v="4">★</span>
+              <span class="fb-star" data-v="5">★</span>
+            </div>
+          </div>
+          <div class="fb-message-group">
+            <label for="fb-mensaje">Mensaje</label>
+            <textarea class="fb-textarea" id="fb-mensaje" placeholder="Escribe tu comentario aquí..." maxlength="100"></textarea>
+            <div class="fb-char-count"><span id="fb-char-num">0</span>/100</div>
+          </div>
+          <button class="fb-submit" onclick="submitFeedback()">Enviar Feedback →</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== CTA ===== -->
     <section class="cta-section" aria-labelledby="cta-heading">
       <div class="container">
@@ -1460,6 +1619,7 @@
           <a href="index_app.html" class="footer-link">Demo Celular</a>
           <a href="#funciones" class="footer-link">Funciones</a>
           <a href="#como-funciona" class="footer-link">Cómo Funciona</a>
+          <a href="#feedback" class="footer-link">Feedback</a>
         </nav>
       </div>
       <p class="footer-copy">
@@ -1468,6 +1628,37 @@
       </p>
     </div>
   </footer>
+
+  <script>
+    // ===== FEEDBACK =====
+    const _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
+
+    ['utilidad', 'usabilidad', 'funcionalidades'].forEach(cat => {
+      const container = document.getElementById('fb-' + cat);
+      container.querySelectorAll('.fb-star').forEach(star => {
+        star.addEventListener('click', () => {
+          const val = parseInt(star.dataset.v);
+          _fbScores[cat] = _fbScores[cat] === val ? 0 : val;
+          container.querySelectorAll('.fb-star').forEach(s => {
+            s.classList.toggle('active', parseInt(s.dataset.v) <= _fbScores[cat]);
+          });
+        });
+      });
+    });
+
+    document.getElementById('fb-mensaje').addEventListener('input', function () {
+      document.getElementById('fb-char-num').textContent = this.value.length;
+    });
+
+    function submitFeedback() {
+      const msg = document.getElementById('fb-mensaje').value.trim();
+      const subject = encodeURIComponent('Feedback CuentasRápidas – Landing');
+      const body = encodeURIComponent(
+        `Utilidad: ${_fbScores.utilidad}/5\nUsabilidad: ${_fbScores.usabilidad}/5\nFuncionalidades: ${_fbScores.funcionalidades}/5\n\n${msg}`
+      );
+      window.open(`mailto:dev.miguelangel.jaimen@gmail.com?subject=${subject}&body=${body}`);
+    }
+  </script>
 
 </body>
 

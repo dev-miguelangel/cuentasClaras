@@ -594,6 +594,60 @@
     }
     .import-expense-amount { font-size: 13px; font-weight: 700; color: #5e6c84; flex-shrink: 0; }
 
+    /* ===== FEEDBACK ===== */
+    .app-feedback-btn {
+      background: rgba(255,255,255,0.18);
+      color: white;
+      border: none;
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+    .app-feedback-btn:active { background: rgba(255,255,255,0.32); }
+
+    .fb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .fb-row-label { font-size: 14px; font-weight: 600; color: #344563; }
+    .fb-stars { display: flex; gap: 4px; }
+    .fb-star {
+      font-size: 28px;
+      cursor: pointer;
+      color: #dfe1e6;
+      line-height: 1;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .fb-star.active { color: #f5a623; }
+    .fb-textarea {
+      width: 100%;
+      padding: 15px 16px;
+      border: 2px solid #dfe1e6;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #172b4d;
+      outline: none;
+      resize: none;
+      height: 88px;
+      font-family: inherit;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .fb-textarea:focus { border-color: #0079bf; }
+    .fb-char-count {
+      font-size: 12px;
+      color: #97a0af;
+      text-align: right;
+      margin-top: 5px;
+      margin-bottom: 20px;
+    }
+
     /* ===== INSTALL PROMPT ===== */
     .install-hero {
       text-align: center; padding: 8px 0 20px;
@@ -644,6 +698,7 @@
     <div class="app-header">
       <span class="app-header-title">💳 CuentasRápidas</span>
       <span class="app-header-user" id="boards-user-badge"></span>
+      <button class="app-feedback-btn" onclick="openFeedbackSheet()">💬</button>
       <button class="app-header-logout" id="boards-logout-btn">Salir</button>
     </div>
     <div class="boards-scroll">
@@ -658,6 +713,7 @@
     <div class="app-header">
       <button class="app-header-back" id="back-btn">← Tableros</button>
       <span class="app-header-title" id="header-board-name"></span>
+      <button class="app-feedback-btn" onclick="openFeedbackSheet()">💬</button>
       <button class="app-header-logout" id="logout-btn">Salir</button>
     </div>
     <div class="col-summary" id="col-summary"></div>
@@ -1592,6 +1648,41 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
     }
+
+    // ===== FEEDBACK =====
+    const _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
+
+    (function initFeedback() {
+      ['utilidad', 'usabilidad', 'funcionalidades'].forEach(cat => {
+        const container = document.getElementById('fb-' + cat);
+        container.querySelectorAll('.fb-star').forEach(star => {
+          star.addEventListener('click', () => {
+            const val = parseInt(star.dataset.v);
+            _fbScores[cat] = _fbScores[cat] === val ? 0 : val;
+            container.querySelectorAll('.fb-star').forEach(s => {
+              s.classList.toggle('active', parseInt(s.dataset.v) <= _fbScores[cat]);
+            });
+          });
+        });
+      });
+      document.getElementById('fb-mensaje').addEventListener('input', function () {
+        document.getElementById('fb-char-num').textContent = this.value.length;
+      });
+      document.getElementById('feedback-sheet-close').addEventListener('click', closeFeedbackSheet);
+    })();
+
+    function openFeedbackSheet() { openSheet('feedback-sheet-overlay'); }
+    function closeFeedbackSheet() { closeSheet('feedback-sheet-overlay'); }
+
+    function submitFeedback() {
+      const msg = document.getElementById('fb-mensaje').value.trim();
+      const subject = encodeURIComponent('Feedback CuentasRápidas – Celular');
+      const body = encodeURIComponent(
+        `Utilidad: ${_fbScores.utilidad}/5\nUsabilidad: ${_fbScores.usabilidad}/5\nFuncionalidades: ${_fbScores.funcionalidades}/5\n\n${msg}`
+      );
+      window.open(`mailto:dev.miguelangel.jaimen@gmail.com?subject=${subject}&body=${body}`);
+      closeFeedbackSheet();
+    }
   </script>
 
   <!-- SHEET: Install Prompt -->
@@ -1634,5 +1725,57 @@
       </div>
     </div>
   </div>
+
+  <!-- FEEDBACK SHEET -->
+  <div class="sheet-overlay" id="feedback-sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <span class="sheet-title">💬 Tu Opinión</span>
+        <button class="sheet-close" id="feedback-sheet-close">✕</button>
+      </div>
+      <div class="sheet-body" style="overflow-y:auto;max-height:60dvh;padding-bottom:calc(env(safe-area-inset-bottom,34px) + 20px)">
+        <p class="sheet-context">Ayúdanos a mejorar CuentasRápidas</p>
+        <div class="fb-row">
+          <span class="fb-row-label">Utilidad</span>
+          <div class="fb-stars" id="fb-utilidad">
+            <span class="fb-star" data-v="1">★</span>
+            <span class="fb-star" data-v="2">★</span>
+            <span class="fb-star" data-v="3">★</span>
+            <span class="fb-star" data-v="4">★</span>
+            <span class="fb-star" data-v="5">★</span>
+          </div>
+        </div>
+        <div class="fb-row">
+          <span class="fb-row-label">Usabilidad</span>
+          <div class="fb-stars" id="fb-usabilidad">
+            <span class="fb-star" data-v="1">★</span>
+            <span class="fb-star" data-v="2">★</span>
+            <span class="fb-star" data-v="3">★</span>
+            <span class="fb-star" data-v="4">★</span>
+            <span class="fb-star" data-v="5">★</span>
+          </div>
+        </div>
+        <div class="fb-row">
+          <span class="fb-row-label">Funcionalidades</span>
+          <div class="fb-stars" id="fb-funcionalidades">
+            <span class="fb-star" data-v="1">★</span>
+            <span class="fb-star" data-v="2">★</span>
+            <span class="fb-star" data-v="3">★</span>
+            <span class="fb-star" data-v="4">★</span>
+            <span class="fb-star" data-v="5">★</span>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:4px">
+          <label for="fb-mensaje">Mensaje</label>
+          <textarea class="fb-textarea" id="fb-mensaje" placeholder="Escribe tu comentario aquí..." maxlength="100"></textarea>
+        </div>
+        <div class="fb-char-count"><span id="fb-char-num">0</span>/100</div>
+        <button class="sbtn sbtn-primary" onclick="submitFeedback()">Enviar</button>
+        <button class="sbtn sbtn-secondary" onclick="closeFeedbackSheet()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
