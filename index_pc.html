@@ -319,6 +319,45 @@
       color: #5e6c84;
     }
 
+    /* ===== BOARD BUDGET BANNER ===== */
+    #board-budget-row {
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.1);
+      padding: 10px 20px 12px;
+    }
+    #board-budget-row .budget-empty {
+      margin-top: 0;
+      max-width: 520px;
+      border: 1.5px dashed rgba(255,255,255,0.35);
+      border-radius: 10px;
+      background: transparent;
+      padding: 10px 16px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    #board-budget-row .budget-empty:hover {
+      border-color: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.06);
+    }
+    #board-budget-row .budget-empty-title { color: rgba(255,255,255,0.9); }
+    #board-budget-row .budget-empty-sub   { color: rgba(255,255,255,0.48); }
+    #board-budget-row .budget-bar-wrap {
+      margin-top: 0;
+      max-width: 520px;
+      background: rgba(0,0,0,0.18);
+      border-radius: 10px;
+      padding: 12px 16px;
+      transition: background 0.2s;
+    }
+    #board-budget-row .budget-bar-wrap:hover { background: rgba(0,0,0,0.26); }
+    #board-budget-row .budget-bar-label-row   { margin-bottom: 9px; }
+    #board-budget-row .budget-bar-label-left  { color: rgba(255,255,255,0.65); }
+    #board-budget-row .budget-bar-label-right { color: rgba(255,255,255,0.5); }
+    #board-budget-row .budget-bar-track       { background: rgba(255,255,255,0.18); }
+    #board-budget-row .budget-meta            { margin-top: 9px; }
+    #board-budget-row .budget-remaining       { font-size: 13px; font-weight: 700; }
+    #board-budget-row .budget-edit-hint       { color: rgba(255,255,255,0.38); }
+    #board-budget-row .budget-bar-wrap:hover .budget-edit-hint { color: rgba(255,255,255,0.72); }
+
     /* ===== ANALYTICS COLUMN ===== */
     .analytics-column {
       background: rgba(255, 255, 255, 0.12);
@@ -438,7 +477,7 @@
     .card {
       background: white;
       border-radius: 8px;
-      padding: 12px 14px;
+      padding: 10px 12px 12px;
       margin-bottom: 8px;
       box-shadow: 0 1px 3px rgba(9, 30, 66, 0.1), 0 0 0 1px rgba(9, 30, 66, 0.04);
       cursor: grab;
@@ -457,43 +496,60 @@
       transform: rotate(2deg);
     }
 
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
     .card-title {
-      font-size: 14px;
+      flex: 1;
+      min-width: 0;
+      font-size: 13.5px;
       color: #172b4d;
       font-weight: 500;
-      line-height: 1.4;
-      margin-bottom: 10px;
+      line-height: 1.45;
       word-break: break-word;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 1px;
+      flex-shrink: 0;
+      margin-top: -1px;
     }
 
     .card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 6px;
     }
 
     .card-amount {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       color: #172b4d;
+      letter-spacing: -0.4px;
+      white-space: nowrap;
     }
 
-    .card-delete {
+    .card-delete,
+    .card-edit {
       background: none;
       border: none;
-      color: #b3bac5;
+      color: #c1c7d0;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       padding: 3px 5px;
       border-radius: 4px;
       line-height: 1;
       transition: color 0.15s, background 0.15s;
     }
 
-    .card-delete:hover {
-      color: #de350b;
-      background: #ffebe6;
-    }
+    .card-delete:hover { color: #de350b; background: #ffebe6; }
+    .card-edit:hover   { color: #0079bf; background: #e8f4fd; }
 
     /* Add card button */
     .add-card-btn {
@@ -1061,6 +1117,7 @@
         <button class="btn-logout" id="logout-btn">Salir</button>
       </div>
     </header>
+    <div id="board-budget-row"></div>
     <div class="board-content">
       <div class="columns-container" id="columns-container"></div>
     </div>
@@ -1085,7 +1142,7 @@
   <!-- BUDGET MODAL -->
   <div class="modal-overlay" id="budget-modal-overlay">
     <div class="modal">
-      <h2>Presupuesto Del Carrito</h2>
+      <h2>Presupuesto Del Tablero</h2>
       <p id="budget-modal-context" style="font-size:13px;color:#5e6c84;margin-bottom:20px;margin-top:-10px"></p>
       <div class="form-group">
         <label for="budget-input">Presupuesto Total (CLP)</label>
@@ -1144,6 +1201,7 @@
     let budget = 0;
     let draggedId = null;
     let addingToColumn = null;
+    let editingId = null;
     let importableBoardExpenses = [];
 
     // ===== STORAGE =====
@@ -1221,16 +1279,27 @@
           ? '<div class="empty-hint">Arrastra Gastos Aquí</div>'
           : '';
 
-        const isCarrito = col.id === 'carrito';
-        const headerExtra = isCarrito ? carritoHeaderHTML(total) : '';
+        let totalStyle = '';
+        if (col.id === 'carrito' && budget > 0) {
+          const boardSpent = expenses
+            .filter(e => e.estado === 'carrito' || e.estado === 'pagado')
+            .reduce((s, e) => s + e.monto, 0);
+          const over = boardSpent > budget;
+          const pct = over ? 0 : Math.max(((budget - boardSpent) / budget) * 100, 0);
+          let c;
+          if (over)         c = '#de350b';
+          else if (pct <= 10) c = '#ff5630';
+          else if (pct <= 30) c = '#ff991f';
+          else                c = '#36b37e';
+          totalStyle = `style="color:${c}"`;
+        }
 
         colEl.innerHTML = `
           <div class="column-header">
             <div class="column-title-row">
               <div class="column-title">${col.title}</div>
             </div>
-            <div class="column-total">${formatCLP(total)}</div>
-            ${headerExtra}
+            <div class="column-total" ${totalStyle}>${formatCLP(total)}</div>
           </div>
           <div class="cards-list" data-col-id="${col.id}">
             ${colExpenses.map(cardHTML).join('')}
@@ -1277,7 +1346,7 @@
                 </div>
               </div>
               <div class="priority-guide-item">
-                <div class="priority-guide-dot" style="background:#0079bf"></div>
+                <div class="priority-guide-dot" style="background:#4fc3f7"></div>
                 <div>
                   <div class="priority-guide-name">Gusto</div>
                   <div class="priority-guide-desc">Lo que mantiene tu ritmo de vida.</div>
@@ -1296,6 +1365,7 @@
       `;
       container.appendChild(analyticsEl);
 
+      renderBoardBudget();
       attachEvents();
       requestAnimationFrame(() => {
         drawColumnCharts();
@@ -1303,13 +1373,13 @@
       });
     }
 
-    function carritoHeaderHTML(spent) {
+    function boardBudgetHTML(spent) {
       if (!budget) {
         return `
           <div class="budget-empty" id="budget-edit-btn">
             <div class="budget-empty-icon">💰</div>
             <div class="budget-empty-text">
-              <div class="budget-empty-title">Definir Presupuesto</div>
+              <div class="budget-empty-title">Definir Presupuesto Del Tablero</div>
               <div class="budget-empty-sub">¿Cuánto tienes disponible para gastar?</div>
             </div>
           </div>
@@ -1320,10 +1390,10 @@
       const pct = over ? 0 : Math.max((remaining / budget) * 100, 0);
 
       let barColor, textColor;
-      if (over) { barColor = '#de350b'; textColor = '#de350b'; }
-      else if (pct <= 10) { barColor = '#ff5630'; textColor = '#bf2600'; }
-      else if (pct <= 30) { barColor = '#ff991f'; textColor = '#974f0c'; }
-      else { barColor = '#36b37e'; textColor = '#006644'; }
+      if (over) { barColor = '#de350b'; textColor = '#ffccc2'; }
+      else if (pct <= 10) { barColor = '#ff5630'; textColor = '#ffceba'; }
+      else if (pct <= 30) { barColor = '#ff991f'; textColor = '#ffe5a0'; }
+      else { barColor = '#36b37e'; textColor = '#b3f5d4'; }
 
       const label = over
         ? `⚠ Excedido Por ${formatCLP(Math.abs(remaining))}`
@@ -1332,7 +1402,7 @@
       return `
         <div class="budget-bar-wrap" id="budget-edit-btn">
           <div class="budget-bar-label-row">
-            <span class="budget-bar-label-left">Presupuesto</span>
+            <span class="budget-bar-label-left">Presupuesto Total</span>
             <span class="budget-bar-label-right">Gastado ${formatCLP(spent)} / ${formatCLP(budget)}</span>
           </div>
           <div class="budget-bar-track">
@@ -1346,15 +1416,27 @@
       `;
     }
 
+    function renderBoardBudget() {
+      const spent = expenses
+        .filter(e => e.estado === 'carrito' || e.estado === 'pagado')
+        .reduce((s, e) => s + e.monto, 0);
+      document.getElementById('board-budget-row').innerHTML = boardBudgetHTML(spent);
+    }
+
     function cardHTML(expense) {
       const pri = expense.prioridad || 'gusto';
       return `
         <div class="card" draggable="true" data-id="${expense.id}">
-          <div class="card-title">${escapeHTML(expense.titulo)}</div>
+          <div class="card-header">
+            <div class="card-title">${escapeHTML(expense.titulo)}</div>
+            <div class="card-actions">
+              <button class="card-edit" data-id="${expense.id}" title="Editar">✎</button>
+              <button class="card-delete" data-id="${expense.id}" title="Eliminar">✕</button>
+            </div>
+          </div>
           <div class="card-footer">
             <span class="priority-badge ${pri}">${PRIORITY_LABELS[pri]}</span>
             <span class="card-amount">${formatCLP(expense.monto)}</span>
-            <button class="card-delete" data-id="${expense.id}" title="Eliminar Gasto">✕</button>
           </div>
         </div>
       `;
@@ -1385,7 +1467,7 @@
       if (!c) return;
       const { ctx, W, H } = c;
 
-      const COLORS = { vital: '#de350b', gusto: '#0079bf', capricho: '#6554c0' };
+      const COLORS = { vital: '#de350b', gusto: '#4fc3f7', capricho: '#6554c0' };
       const LBLS   = { vital: 'Vital',   gusto: 'Gusto',   capricho: 'Capricho' };
 
       const items  = expenses.filter(e => e.estado === colId);
@@ -1473,7 +1555,7 @@
       if (!c) return;
       const { ctx, W, H } = c;
 
-      const COL_COLORS = { por_pagar: '#ff991f', carrito: '#0079bf', pagado: '#36b37e' };
+      const COL_COLORS = { por_pagar: '#ff991f', carrito: '#4fc3f7', pagado: '#36b37e' };
       const COL_LABELS = { por_pagar: 'Por Pagar', carrito: 'Carrito', pagado: 'Pagado' };
 
       const data = COLUMNS.map(col => ({
@@ -1528,6 +1610,13 @@
 
       const budgetBtn = document.getElementById('budget-edit-btn');
       if (budgetBtn) budgetBtn.addEventListener('click', openBudgetModal);
+
+      document.querySelectorAll('.card-edit').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          openEditModal(btn.dataset.id);
+        });
+      });
 
       document.querySelectorAll('.card-delete').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -1603,15 +1692,17 @@
 
     // ===== BUDGET MODAL =====
     function openBudgetModal() {
-      const spent = expenses.filter(e => e.estado === 'carrito').reduce((s, e) => s + e.monto, 0);
+      const spent = expenses
+        .filter(e => e.estado === 'carrito' || e.estado === 'pagado')
+        .reduce((s, e) => s + e.monto, 0);
       const removeBtn = document.getElementById('budget-remove-btn');
       const ctx = document.getElementById('budget-modal-context');
 
       if (budget > 0) {
-        ctx.textContent = `Actualmente tienes ${formatCLP(spent)} gastados de ${formatCLP(budget)}.`;
+        ctx.textContent = `Gastado ${formatCLP(spent)} de ${formatCLP(budget)} (carrito + pagado).`;
         removeBtn.style.display = '';
       } else {
-        ctx.textContent = '¿Cuánto dinero tienes disponible para gastar en el carrito?';
+        ctx.textContent = '¿Cuánto dinero tienes disponible para gastar en este tablero?';
         removeBtn.style.display = 'none';
       }
 
@@ -1670,14 +1761,33 @@
 
     // ===== MODAL =====
     function openModal(colId) {
+      editingId = null;
       addingToColumn = colId;
+      document.getElementById('modal-title').textContent = 'Agregar Gasto';
+      document.getElementById('modal-add-btn').textContent = 'Agregar';
       document.getElementById('modal-titulo').value = '';
       document.getElementById('modal-monto').value = '';
       document.getElementById('modal-titulo').classList.remove('error');
       document.getElementById('modal-monto').classList.remove('error');
-      // reset priority to default
       document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
       document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
+      document.getElementById('modal-overlay').classList.add('active');
+      document.getElementById('modal-titulo').focus();
+    }
+
+    function openEditModal(id) {
+      const exp = expenses.find(e => e.id === id);
+      if (!exp) return;
+      editingId = id;
+      addingToColumn = null;
+      document.getElementById('modal-title').textContent = 'Editar Gasto';
+      document.getElementById('modal-add-btn').textContent = 'Guardar';
+      document.getElementById('modal-titulo').value = exp.titulo;
+      document.getElementById('modal-monto').value = exp.monto;
+      document.getElementById('modal-titulo').classList.remove('error');
+      document.getElementById('modal-monto').classList.remove('error');
+      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.priority-opt[data-priority="${exp.prioridad || 'gusto'}"]`).classList.add('active');
       document.getElementById('modal-overlay').classList.add('active');
       document.getElementById('modal-titulo').focus();
     }
@@ -1685,6 +1795,7 @@
     function closeModal() {
       document.getElementById('modal-overlay').classList.remove('active');
       addingToColumn = null;
+      editingId = null;
     }
 
     document.getElementById('modal-add-btn').addEventListener('click', () => {
@@ -1713,14 +1824,25 @@
 
       if (!valid) return;
 
-      addExpense(titulo, monto, addingToColumn, selectedPriority());
-
-      // reset form and stay open for next expense
-      tituloInput.value = '';
-      montoInput.value = '';
-      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
-      document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
-      tituloInput.focus();
+      if (editingId) {
+        const exp = expenses.find(e => e.id === editingId);
+        if (exp) {
+          exp.titulo = titulo;
+          exp.monto = monto;
+          exp.prioridad = selectedPriority();
+        }
+        saveExpenses();
+        renderBoard();
+        closeModal();
+      } else {
+        addExpense(titulo, monto, addingToColumn, selectedPriority());
+        // reset form and stay open for next expense
+        tituloInput.value = '';
+        montoInput.value = '';
+        document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+        document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
+        tituloInput.focus();
+      }
     });
 
     document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);

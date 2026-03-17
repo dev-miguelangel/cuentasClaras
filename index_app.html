@@ -268,53 +268,65 @@
 
     /* ===== CARDS ===== */
     .mob-card {
-      background: white; border-radius: 14px;
-      padding: 14px 14px 12px; margin-bottom: 10px;
+      background: white; border-radius: 12px;
+      margin-bottom: 10px;
       box-shadow: 0 1px 4px rgba(9,30,66,0.1), 0 0 0 1px rgba(9,30,66,0.04);
+      display: flex; overflow: hidden;
     }
 
-    .mob-card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .mob-card-stripe {
+      width: 4px; flex-shrink: 0;
+    }
 
-    .mob-card-priority-bar {
-      width: 4px; align-self: stretch;
-      border-radius: 2px; flex-shrink: 0; min-height: 20px;
+    .mob-card-body {
+      flex: 1; min-width: 0;
+      padding: 11px 12px 12px;
+    }
+
+    .mob-card-row-top {
+      display: flex; align-items: flex-start;
+      gap: 8px; margin-bottom: 10px;
     }
 
     .mob-card-title {
-      flex: 1; font-size: 15px; font-weight: 500;
+      flex: 1; min-width: 0;
+      font-size: 14.5px; font-weight: 500;
       color: #172b4d; line-height: 1.45; word-break: break-word;
       user-select: text;
     }
 
-    .mob-card-footer {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 8px;
+    .mob-card-icon-actions {
+      display: flex; gap: 2px; flex-shrink: 0; margin-top: -1px;
     }
 
-    .mob-card-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .mob-card-row-bottom {
+      display: flex; align-items: center; gap: 8px;
+    }
 
     .mob-card-amount {
-      font-size: 16px; font-weight: 800;
-      color: #172b4d; letter-spacing: -0.3px;
+      font-size: 15px; font-weight: 800;
+      color: #172b4d; letter-spacing: -0.4px;
+      white-space: nowrap; flex-shrink: 0;
     }
 
-    .mob-card-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-
     .mob-card-move {
+      margin-left: auto;
       background: #f0f1f3; border: none; color: #5e6c84;
-      padding: 7px 11px; border-radius: 8px;
+      padding: 6px 12px; border-radius: 8px;
       font-size: 13px; font-weight: 600; cursor: pointer;
-      min-height: 34px; display: flex; align-items: center; gap: 3px;
+      min-height: 32px; white-space: nowrap; flex-shrink: 0;
     }
     .mob-card-move:active { background: #dfe1e6; }
 
-    .mob-card-delete {
+    .mob-card-delete,
+    .mob-card-edit {
       background: none; border: none; color: #c1c7d0;
-      padding: 7px; border-radius: 8px; font-size: 15px;
-      cursor: pointer; min-height: 34px; min-width: 34px;
+      padding: 4px 6px; border-radius: 6px; font-size: 14px;
+      cursor: pointer; line-height: 1;
       display: flex; align-items: center; justify-content: center;
     }
     .mob-card-delete:active { color: #de350b; background: #ffebe6; }
+    .mob-card-edit:active   { color: #0079bf; background: #e8f4fd; }
 
     /* Priority */
     .priority-badge {
@@ -709,7 +721,7 @@
     <div class="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-header">
-        <div class="sheet-title">Presupuesto Del Carrito</div>
+        <div class="sheet-title">Presupuesto Del Tablero</div>
         <button class="sheet-close" id="budget-sheet-close">✕</button>
       </div>
       <div class="sheet-body">
@@ -768,7 +780,7 @@
     ];
     const PRIORITY_LABELS = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
     const BOARD_COLORS    = ['#0052cc','#00875a','#de350b','#6554c0','#d29034','#00aecc','#cd5a91','#172b4d'];
-    const COL_COLORS      = { por_pagar: '#ff991f', carrito: '#0079bf', pagado: '#36b37e' };
+    const COL_COLORS      = { por_pagar: '#ff991f', carrito: '#4fc3f7', pagado: '#36b37e' };
     const PRI_COLORS      = { vital: '#de350b', gusto: '#0079bf', capricho: '#6554c0' };
 
     let currentUser = null;
@@ -779,6 +791,7 @@
     let activeTab = 'por_pagar';
     let addingToColumn = null;
     let movingExpenseId = null;
+    let editingId = null;
     let importableBoardExpenses = [];
 
     // ===== STORAGE =====
@@ -856,17 +869,30 @@
       const col = COLUMNS.find(c => c.id === activeTab);
       const colExpenses = expenses.filter(e => e.estado === activeTab);
       const total = colExpenses.reduce((s, e) => s + e.monto, 0);
+      const boardSpent = expenses
+        .filter(e => e.estado === 'carrito' || e.estado === 'pagado')
+        .reduce((s, e) => s + e.monto, 0);
+
+      let totalStyle = '';
+      if (activeTab === 'carrito' && budget > 0) {
+        const over = boardSpent > budget;
+        const pct = over ? 0 : Math.max(((budget - boardSpent) / budget) * 100, 0);
+        let c;
+        if (over)         c = '#de350b';
+        else if (pct <= 10) c = '#ff5630';
+        else if (pct <= 30) c = '#ff991f';
+        else                c = '#36b37e';
+        totalStyle = `style="color:${c}"`;
+      }
 
       summary.innerHTML = `
         <div class="col-summary-title">${col.title}</div>
-        <div class="col-summary-total">${formatCLP(total)}</div>
-        ${activeTab === 'carrito' ? `<div class="col-budget" id="col-budget">${carritoHeaderHTML(total)}</div>` : ''}
+        <div class="col-summary-total" ${totalStyle}>${formatCLP(total)}</div>
+        <div class="col-budget" id="col-budget">${boardBudgetHTML(boardSpent)}</div>
       `;
 
-      if (activeTab === 'carrito') {
-        const budgetEl = document.getElementById('col-budget');
-        if (budgetEl) budgetEl.addEventListener('click', openBudgetSheet);
-      }
+      const budgetEl = document.getElementById('col-budget');
+      if (budgetEl) budgetEl.addEventListener('click', openBudgetSheet);
 
       if (colExpenses.length === 0) {
         const icons = { por_pagar: '📋', carrito: '🛒', pagado: '✅' };
@@ -879,6 +905,9 @@
         `;
       } else {
         content.innerHTML = colExpenses.map(cardHTML).join('');
+        content.querySelectorAll('.mob-card-edit').forEach(btn => {
+          btn.addEventListener('click', () => openEditSheet(btn.dataset.id));
+        });
         content.querySelectorAll('.mob-card-delete').forEach(btn => {
           btn.addEventListener('click', () => deleteExpense(btn.dataset.id));
         });
@@ -894,7 +923,7 @@
       });
     }
 
-    function carritoHeaderHTML(spent) {
+    function boardBudgetHTML(spent) {
       if (!budget) {
         return `
           <div class="budget-empty">
@@ -938,18 +967,19 @@
       const pri = e.prioridad || 'gusto';
       return `
         <div class="mob-card">
-          <div class="mob-card-top">
-            <div class="mob-card-priority-bar" style="background:${PRI_COLORS[pri]}"></div>
-            <div class="mob-card-title">${escapeHTML(e.titulo)}</div>
-          </div>
-          <div class="mob-card-footer">
-            <div class="mob-card-left">
+          <div class="mob-card-stripe" style="background:${PRI_COLORS[pri]}"></div>
+          <div class="mob-card-body">
+            <div class="mob-card-row-top">
+              <div class="mob-card-title">${escapeHTML(e.titulo)}</div>
+              <div class="mob-card-icon-actions">
+                <button class="mob-card-edit" data-id="${e.id}">✎</button>
+                <button class="mob-card-delete" data-id="${e.id}">✕</button>
+              </div>
+            </div>
+            <div class="mob-card-row-bottom">
               <span class="priority-badge ${pri}">${PRIORITY_LABELS[pri]}</span>
               <span class="mob-card-amount">${formatCLP(e.monto)}</span>
-            </div>
-            <div class="mob-card-actions">
               <button class="mob-card-move" data-id="${e.id}">Mover →</button>
-              <button class="mob-card-delete" data-id="${e.id}">✕</button>
             </div>
           </div>
         </div>
@@ -976,7 +1006,7 @@
               <div><div class="priority-guide-name">Vital</div><div class="priority-guide-desc">Sin esto, el mundo se detiene.</div></div>
             </div>
             <div class="priority-guide-item">
-              <div class="priority-guide-dot" style="background:#0079bf"></div>
+              <div class="priority-guide-dot" style="background:#4fc3f7"></div>
               <div><div class="priority-guide-name">Gusto</div><div class="priority-guide-desc">Lo que mantiene tu ritmo de vida.</div></div>
             </div>
             <div class="priority-guide-item">
@@ -1012,7 +1042,7 @@
       const c = initCanvas(canvasId);
       if (!c) return;
       const { ctx, W, H } = c;
-      const COLORS = { vital: '#de350b', gusto: '#0079bf', capricho: '#6554c0' };
+      const COLORS = { vital: '#de350b', gusto: '#4fc3f7', capricho: '#6554c0' };
       const LBLS   = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
       const items  = expenses.filter(e => e.estado === colId);
       const totals = { vital: 0, gusto: 0, capricho: 0 };
@@ -1132,7 +1162,10 @@
 
     // ===== ADD SHEET =====
     function openAddSheet(colId) {
+      editingId = null;
       addingToColumn = colId;
+      document.querySelector('#add-sheet-overlay .sheet-title').textContent = 'Agregar Gasto';
+      document.getElementById('add-btn').textContent = 'Agregar';
       document.getElementById('add-titulo').value = '';
       document.getElementById('add-monto').value = '';
       document.getElementById('add-titulo').classList.remove('error');
@@ -1142,7 +1175,25 @@
       openSheet('add-sheet-overlay');
       setTimeout(() => document.getElementById('add-titulo').focus(), 350);
     }
-    function closeAddSheet() { closeSheet('add-sheet-overlay'); }
+
+    function openEditSheet(id) {
+      const exp = expenses.find(e => e.id === id);
+      if (!exp) return;
+      editingId = id;
+      addingToColumn = null;
+      document.querySelector('#add-sheet-overlay .sheet-title').textContent = 'Editar Gasto';
+      document.getElementById('add-btn').textContent = 'Guardar';
+      document.getElementById('add-titulo').value = exp.titulo;
+      document.getElementById('add-monto').value = exp.monto;
+      document.getElementById('add-titulo').classList.remove('error');
+      document.getElementById('add-monto').classList.remove('error');
+      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.priority-opt[data-priority="${exp.prioridad || 'gusto'}"]`).classList.add('active');
+      openSheet('add-sheet-overlay');
+      setTimeout(() => document.getElementById('add-titulo').focus(), 350);
+    }
+
+    function closeAddSheet() { closeSheet('add-sheet-overlay'); editingId = null; }
 
     document.getElementById('add-sheet-close').addEventListener('click', closeAddSheet);
     document.getElementById('add-close-btn').addEventListener('click', closeAddSheet);
@@ -1159,11 +1210,23 @@
         mon.classList.add('error'); if (valid) mon.focus(); valid = false;
       } else mon.classList.remove('error');
       if (!valid) return;
-      addExpense(titulo, monto, addingToColumn, selectedPriority());
-      tit.value = ''; mon.value = '';
-      document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
-      document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
-      tit.focus();
+      if (editingId) {
+        const exp = expenses.find(e => e.id === editingId);
+        if (exp) {
+          exp.titulo = titulo;
+          exp.monto = monto;
+          exp.prioridad = selectedPriority();
+        }
+        saveExpenses();
+        renderActiveTab();
+        closeAddSheet();
+      } else {
+        addExpense(titulo, monto, addingToColumn, selectedPriority());
+        tit.value = ''; mon.value = '';
+        document.querySelectorAll('.priority-opt').forEach(b => b.classList.remove('active'));
+        document.querySelector('.priority-opt[data-priority="gusto"]').classList.add('active');
+        tit.focus();
+      }
     });
 
     document.getElementById('priority-selector').addEventListener('click', e => {
@@ -1180,14 +1243,16 @@
 
     // ===== BUDGET SHEET =====
     function openBudgetSheet() {
-      const spent = expenses.filter(e => e.estado === 'carrito').reduce((s, e) => s + e.monto, 0);
+      const spent = expenses
+        .filter(e => e.estado === 'carrito' || e.estado === 'pagado')
+        .reduce((s, e) => s + e.monto, 0);
       const ctx2 = document.getElementById('budget-sheet-context');
       const removeBtn = document.getElementById('budget-remove-btn');
       if (budget > 0) {
-        ctx2.textContent = `Actualmente tienes ${formatCLP(spent)} gastados de ${formatCLP(budget)}.`;
+        ctx2.textContent = `Gastado ${formatCLP(spent)} de ${formatCLP(budget)} (carrito + pagado).`;
         removeBtn.style.display = '';
       } else {
-        ctx2.textContent = '¿Cuánto dinero tienes disponible para gastar en el carrito?';
+        ctx2.textContent = '¿Cuánto dinero tienes disponible para gastar en este tablero?';
         removeBtn.style.display = 'none';
       }
       document.getElementById('budget-input').value = budget > 0 ? budget : '';
