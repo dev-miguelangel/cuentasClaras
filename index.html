@@ -1584,7 +1584,8 @@
               oninput="document.getElementById('fb-char-num').textContent=this.value.length"></textarea>
             <div class="fb-char-count"><span id="fb-char-num">0</span>/100</div>
           </div>
-          <button class="fb-submit" onclick="submitFeedback()">Enviar Feedback →</button>
+          <div id="fb-status" style="font-size:14px;min-height:20px;margin-top:14px;text-align:center;font-weight:600"></div>
+          <button class="fb-submit" id="fb-send-btn" onclick="submitFeedback()">Enviar Feedback →</button>
         </div>
       </div>
     </section>
@@ -1642,14 +1643,44 @@
     }
 
     function submitFeedback() {
-      var msg = document.getElementById('fb-mensaje').value.trim();
-      var subject = encodeURIComponent('Feedback CuentasRápidas – Landing');
-      var body = encodeURIComponent(
-        'Utilidad: ' + _fbScores.utilidad + '/5\nUsabilidad: ' + _fbScores.usabilidad + '/5\nFuncionalidades: ' + _fbScores.funcionalidades + '/5\n\n' + msg
-      );
-      window.open('mailto:dev.miguelangel.jaimen@gmail.com?subject=' + subject + '&body=' + body);
+      var btn = document.getElementById('fb-send-btn');
+      var status = document.getElementById('fb-status');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      status.textContent = '';
+      emailjs.send('service_wr18xhk', 'template_rxr4zig', {
+        utilidad:        _fbScores.utilidad + '/5',
+        usabilidad:      _fbScores.usabilidad + '/5',
+        funcionalidades: _fbScores.funcionalidades + '/5',
+        mensaje:         document.getElementById('fb-mensaje').value.trim(),
+        version:         'Landing'
+      }).then(function() {
+        btn.textContent = '¡Enviado! ✓';
+        btn.style.background = 'var(--green)';
+        status.style.color = 'var(--green)';
+        status.textContent = 'Gracias por tu feedback.';
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.textContent = 'Enviar Feedback →';
+          btn.style.background = '';
+          status.textContent = '';
+          _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
+          ['utilidad','usabilidad','funcionalidades'].forEach(function(c) {
+            document.querySelectorAll('#fb-' + c + ' .fb-star').forEach(function(s) { s.classList.remove('active'); });
+          });
+          document.getElementById('fb-mensaje').value = '';
+          document.getElementById('fb-char-num').textContent = '0';
+        }, 2500);
+      }, function() {
+        btn.disabled = false;
+        btn.textContent = 'Enviar Feedback →';
+        status.style.color = 'var(--red)';
+        status.textContent = 'Error al enviar. Intenta de nuevo.';
+      });
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('u1PGzoaxrjwOf3HLq');</script>
 
 </body>
 

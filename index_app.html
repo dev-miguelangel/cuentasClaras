@@ -1662,15 +1662,43 @@
     function closeFeedbackSheet() { closeSheet('feedback-sheet-overlay'); }
 
     function submitFeedback() {
-      var msg = document.getElementById('fb-mensaje').value.trim();
-      var subject = encodeURIComponent('Feedback CuentasRápidas – Celular');
-      var body = encodeURIComponent(
-        'Utilidad: ' + _fbScores.utilidad + '/5\nUsabilidad: ' + _fbScores.usabilidad + '/5\nFuncionalidades: ' + _fbScores.funcionalidades + '/5\n\n' + msg
-      );
-      window.open('mailto:dev.miguelangel.jaimen@gmail.com?subject=' + subject + '&body=' + body);
-      closeFeedbackSheet();
+      var btn = document.getElementById('fb-send-btn');
+      var status = document.getElementById('fb-status');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      status.textContent = '';
+      emailjs.send('service_wr18xhk', 'template_rxr4zig', {
+        utilidad:        _fbScores.utilidad + '/5',
+        usabilidad:      _fbScores.usabilidad + '/5',
+        funcionalidades: _fbScores.funcionalidades + '/5',
+        mensaje:         document.getElementById('fb-mensaje').value.trim(),
+        version:         'Celular'
+      }).then(function() {
+        btn.textContent = '¡Enviado! ✓';
+        status.style.color = '#36b37e';
+        status.textContent = 'Gracias por tu feedback.';
+        setTimeout(function() {
+          closeFeedbackSheet();
+          btn.disabled = false;
+          btn.textContent = 'Enviar';
+          status.textContent = '';
+          _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
+          ['utilidad','usabilidad','funcionalidades'].forEach(function(c) {
+            document.querySelectorAll('#fb-' + c + ' .fb-star').forEach(function(s) { s.classList.remove('active'); });
+          });
+          document.getElementById('fb-mensaje').value = '';
+          document.getElementById('fb-char-num').textContent = '0';
+        }, 1800);
+      }, function() {
+        btn.disabled = false;
+        btn.textContent = 'Enviar';
+        status.style.color = '#de350b';
+        status.textContent = 'Error al enviar. Intenta de nuevo.';
+      });
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('u1PGzoaxrjwOf3HLq');</script>
 
   <!-- SHEET: Install Prompt -->
   <div class="sheet-overlay" id="install-sheet-overlay">
@@ -1759,7 +1787,8 @@
             oninput="document.getElementById('fb-char-num').textContent=this.value.length"></textarea>
         </div>
         <div class="fb-char-count"><span id="fb-char-num">0</span>/100</div>
-        <button class="sbtn sbtn-primary" onclick="submitFeedback()">Enviar</button>
+        <div id="fb-status" style="font-size:13px;min-height:18px;margin-bottom:8px;text-align:center"></div>
+        <button class="sbtn sbtn-primary" id="fb-send-btn" onclick="submitFeedback()">Enviar</button>
         <button class="sbtn sbtn-secondary" onclick="closeFeedbackSheet()">Cerrar</button>
       </div>
     </div>
