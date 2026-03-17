@@ -1,0 +1,27 @@
+{
+  "name": "CuentasRápidas",
+  "short_name": "CuentasRápidas",
+  "description": "Organiza tus gastos con un tablero Kanban. Sin registro, funciona offline.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0052cc",
+  "theme_color": "#0052cc",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["finance", "productivity"]
+}

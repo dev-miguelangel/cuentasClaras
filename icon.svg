@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="108" fill="#0052cc"/>
+  <!-- Card body -->
+  <rect x="88" y="168" width="336" height="212" rx="22" fill="white"/>
+  <!-- Magnetic stripe -->
+  <rect x="88" y="220" width="336" height="50" fill="#0079bf"/>
+  <!-- Chip -->
+  <rect x="120" y="284" width="58" height="44" rx="9" fill="#f7c948"/>
+  <line x1="149" y1="284" x2="149" y2="328" stroke="#e0a800" stroke-width="1.5"/>
+  <line x1="120" y1="306" x2="178" y2="306" stroke="#e0a800" stroke-width="1.5"/>
+  <!-- Card number lines -->
+  <rect x="210" y="292" width="170" height="10" rx="5" fill="rgba(9,30,66,0.2)"/>
+  <rect x="210" y="310" width="114" height="10" rx="5" fill="rgba(9,30,66,0.13)"/>
+</svg>

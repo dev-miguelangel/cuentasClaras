@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CuentasRápidas" />
   <meta name="theme-color" content="#0052cc" />
+  <meta name="description" content="Organiza tus gastos con un tablero Kanban en tu celular. Sin registro, funciona offline." />
+  <link rel="manifest" href="/manifest-app.json" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
   <title>CuentasRápidas</title>
   <style>
     :root {
@@ -577,6 +581,29 @@
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .import-expense-amount { font-size: 13px; font-weight: 700; color: #5e6c84; flex-shrink: 0; }
+
+    /* ===== INSTALL PROMPT ===== */
+    .install-hero {
+      text-align: center; padding: 8px 0 20px;
+    }
+    .install-hero-icon { font-size: 60px; margin-bottom: 10px; }
+    .install-hero-name { font-size: 20px; font-weight: 800; color: #172b4d; }
+    .install-hero-desc { font-size: 14px; color: #5e6c84; margin-top: 6px; line-height: 1.5; }
+
+    .install-step {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 14px; background: #f8f9fa;
+      border-radius: 10px; margin-bottom: 8px;
+      font-size: 14px; color: #344563; line-height: 1.45;
+    }
+    .install-step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #0079bf; color: white;
+      font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .install-step-icon { font-size: 18px; }
   </style>
 </head>
 <body>
@@ -1434,6 +1461,113 @@
     renderUserList();
     const savedUser = sessionStorage.getItem('currentUser');
     if (savedUser) login(savedUser);
+
+    // ===== PWA INSTALL =====
+    let _deferredPrompt = null;
+    const _installKey = 'cuentas_install_dismissed';
+
+    function _isStandalone() {
+      return window.matchMedia('(display-mode: standalone)').matches ||
+             window.navigator.standalone === true;
+    }
+
+    function _detectOS() {
+      const ua = navigator.userAgent;
+      if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
+      if (/android/i.test(ua)) return 'android';
+      return 'other';
+    }
+
+    function _tryShowInstall() {
+      if (_isStandalone()) return;
+      if (localStorage.getItem(_installKey)) return;
+      const os = _detectOS();
+      if (os === 'ios') {
+        document.getElementById('install-ios').style.display = 'block';
+        document.getElementById('install-native').style.display = 'none';
+        openSheet('install-sheet-overlay');
+      }
+      // Android/other: handled by beforeinstallprompt event
+    }
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      _deferredPrompt = e;
+      if (!_isStandalone() && !localStorage.getItem(_installKey)) {
+        document.getElementById('install-native').style.display = 'block';
+        document.getElementById('install-ios').style.display = 'none';
+        setTimeout(() => openSheet('install-sheet-overlay'), 3500);
+      }
+    });
+
+    document.getElementById('install-btn').addEventListener('click', async () => {
+      if (!_deferredPrompt) return;
+      _deferredPrompt.prompt();
+      const { outcome } = await _deferredPrompt.userChoice;
+      _deferredPrompt = null;
+      closeSheet('install-sheet-overlay');
+      localStorage.setItem(_installKey, '1');
+    });
+
+    document.getElementById('install-sheet-close').addEventListener('click', () => {
+      closeSheet('install-sheet-overlay');
+      localStorage.setItem(_installKey, '1');
+    });
+    ['install-later-btn', 'install-later-btn-native'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', () => {
+        closeSheet('install-sheet-overlay');
+        localStorage.setItem(_installKey, '1');
+      });
+    });
+
+    // Show iOS prompt after delay
+    setTimeout(_tryShowInstall, 3500);
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+    }
   </script>
+
+  <!-- SHEET: Install Prompt -->
+  <div class="sheet-overlay" id="install-sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-body">
+        <div class="install-hero">
+          <div class="install-hero-icon">💳</div>
+          <div class="install-hero-name">CuentasRápidas</div>
+          <div class="install-hero-desc">Agrégala a tu pantalla de inicio para un acceso rápido y una experiencia de app completa.</div>
+        </div>
+
+        <!-- iOS instructions -->
+        <div id="install-ios" style="display:none">
+          <div class="install-step">
+            <span class="install-step-num">1</span>
+            <span>Toca el botón <strong>Compartir</strong> <span class="install-step-icon">⎋</span> en la barra del navegador</span>
+          </div>
+          <div class="install-step">
+            <span class="install-step-num">2</span>
+            <span>Desplázate y toca <strong>"Agregar A Pantalla De Inicio"</strong></span>
+          </div>
+          <div class="install-step">
+            <span class="install-step-num">3</span>
+            <span>Toca <strong>"Agregar"</strong> para confirmar</span>
+          </div>
+          <div style="height:12px"></div>
+          <button class="sbtn sbtn-secondary" id="install-later-btn">Entendido</button>
+        </div>
+
+        <!-- Android native install -->
+        <div id="install-native" style="display:none">
+          <button class="sbtn sbtn-primary" id="install-btn">Instalar App</button>
+          <button class="sbtn sbtn-secondary" id="install-later-btn-native">Ahora No</button>
+        </div>
+
+        <button class="sheet-close" id="install-sheet-close"
+          style="position:absolute;top:16px;right:16px">✕</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
