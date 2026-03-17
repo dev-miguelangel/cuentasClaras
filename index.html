@@ -917,26 +917,89 @@
     }
 
     /* ===== RESPONSIVE ===== */
+
+    /* --- Tablet (≤ 1024px) --- */
+    @media (max-width: 1024px) {
+      .hero-content {
+        gap: 32px;
+      }
+
+      .split {
+        gap: 40px;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .priority-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .devices {
+        gap: 16px;
+      }
+
+      .feedback-card {
+        padding: 32px 28px;
+      }
+    }
+
+    /* --- Mobile (≤ 768px) --- */
     @media (max-width: 768px) {
       .hero {
-        padding: 56px 0 0;
+        padding: 48px 0 0;
       }
 
       .hero-content {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 36px;
+        padding-bottom: 0;
+      }
+
+      .hero-text {
+        text-align: center;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+      }
+
+      .hero-sub {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-note {
+        justify-content: center;
       }
 
       .hero-visual {
         justify-content: center;
+        padding-bottom: 0;
       }
 
       .kanban-mock {
-        max-width: 100%;
+        max-width: 420px;
+        width: 100%;
+      }
+
+      .hero .container {
+        padding-bottom: 0;
       }
 
       .section {
-        padding: 64px 0;
+        padding: 56px 0;
+      }
+
+      .section-header {
+        margin-bottom: 36px;
       }
 
       .features-grid {
@@ -945,23 +1008,35 @@
 
       .priority-cards {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 10px;
       }
 
       .split,
       .split.reverse {
         grid-template-columns: 1fr;
         direction: ltr;
-        gap: 32px;
+        gap: 28px;
+      }
+
+      .split-visual {
+        order: -1;
       }
 
       .devices {
         grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
       }
 
       .footer-inner {
         flex-direction: column;
         align-items: flex-start;
+        gap: 16px;
+      }
+
+      .footer-links {
+        gap: 16px;
+        flex-wrap: wrap;
       }
 
       .steps::before {
@@ -971,29 +1046,153 @@
       .nav-links .nav-link {
         display: none;
       }
+
+      .pills-inner {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding: 0 16px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .pills-inner::-webkit-scrollbar { display: none; }
+
+      .feedback-card {
+        padding: 24px 18px;
+      }
+
+      .fb-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 14px 0;
+      }
+
+      .fb-star {
+        font-size: 32px;
+      }
+
+      .cta-section {
+        padding: 72px 0;
+      }
+
+      .cta-section h2 {
+        font-size: 28px;
+      }
     }
 
+    /* --- Small mobile (≤ 480px) --- */
     @media (max-width: 480px) {
       .container {
         padding: 0 16px;
       }
 
+      .hero {
+        padding: 40px 0 0;
+      }
+
       .hero h1 {
-        font-size: 30px;
+        font-size: clamp(26px, 8vw, 36px);
+      }
+
+      .hero-sub {
+        font-size: 15px;
       }
 
       .hero-actions {
         flex-direction: column;
+        width: 100%;
       }
 
       .btn-hero-primary,
       .btn-hero-secondary {
         justify-content: center;
+        width: 100%;
+      }
+
+      .kanban-mock {
+        max-width: 100%;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .section {
+        padding: 48px 0;
+      }
+
+      .section-title {
+        font-size: clamp(22px, 6vw, 32px);
+      }
+
+      .nav-brand {
+        font-size: 15px;
+      }
+
+      .nav-cta {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+
+      .feature-card {
+        padding: 22px 18px;
+      }
+
+      .priority-card {
+        padding: 20px 16px;
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: 14px;
+      }
+
+      .priority-card-icon {
+        font-size: 28px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+
+      .priority-card-name {
+        margin-bottom: 3px;
+      }
+
+      .device-card {
+        padding: 24px 20px;
       }
 
       .cta-actions {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+
+      .cta-actions a {
+        justify-content: center;
+      }
+
+      .feedback-card {
+        padding: 20px 14px;
+      }
+
+      .fb-stars {
+        gap: 2px;
+      }
+
+      .fb-star {
+        font-size: 30px;
+      }
+
+      .fb-submit {
+        padding: 13px;
+        font-size: 14px;
+      }
+
+      .footer {
+        padding: 36px 0 24px;
+      }
+
+      .footer-links {
+        gap: 12px;
       }
     }
 
