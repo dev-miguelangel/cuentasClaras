@@ -268,9 +268,9 @@
 
     /* ===== CARDS ===== */
     .mob-card {
-      background: white; border-radius: 12px;
+      background: transparent; border-radius: 12px;
       margin-bottom: 10px;
-      box-shadow: 0 1px 4px rgba(9,30,66,0.1), 0 0 0 1px rgba(9,30,66,0.04);
+      border: 1px solid rgba(255,255,255,0.22);
       display: flex; overflow: hidden;
     }
 
@@ -291,7 +291,7 @@
     .mob-card-title {
       flex: 1; min-width: 0;
       font-size: 14.5px; font-weight: 500;
-      color: #172b4d; line-height: 1.45; word-break: break-word;
+      color: rgba(255,255,255,0.95); line-height: 1.45; word-break: break-word;
       user-select: text;
     }
 
@@ -305,28 +305,34 @@
 
     .mob-card-amount {
       font-size: 15px; font-weight: 800;
-      color: #172b4d; letter-spacing: -0.4px;
+      color: white; letter-spacing: -0.4px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    .mob-card-pct {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.5);
       white-space: nowrap; flex-shrink: 0;
     }
 
     .mob-card-move {
       margin-left: auto;
-      background: #f0f1f3; border: none; color: #5e6c84;
+      background: rgba(255,255,255,0.12); border: none; color: rgba(255,255,255,0.8);
       padding: 6px 12px; border-radius: 8px;
       font-size: 13px; font-weight: 600; cursor: pointer;
       min-height: 32px; white-space: nowrap; flex-shrink: 0;
     }
-    .mob-card-move:active { background: #dfe1e6; }
+    .mob-card-move:active { background: rgba(255,255,255,0.22); }
 
     .mob-card-delete,
     .mob-card-edit {
-      background: none; border: none; color: #c1c7d0;
+      background: none; border: none; color: rgba(255,255,255,0.35);
       padding: 4px 6px; border-radius: 6px; font-size: 14px;
       cursor: pointer; line-height: 1;
       display: flex; align-items: center; justify-content: center;
     }
-    .mob-card-delete:active { color: #de350b; background: #ffebe6; }
-    .mob-card-edit:active   { color: #0079bf; background: #e8f4fd; }
+    .mob-card-delete:active { color: #ff5630; background: rgba(255,255,255,0.1); }
+    .mob-card-edit:active   { color: #4fc3f7; background: rgba(255,255,255,0.1); }
 
     /* Priority */
     .priority-badge {
@@ -1022,6 +1028,7 @@
 
     function cardHTML(e) {
       const pri = e.prioridad || 'gusto';
+      const pct = (budget > 0 && e.monto > 0) ? Math.round(e.monto / budget * 100) : 0;
       return `
         <div class="mob-card">
           <div class="mob-card-stripe" style="background:${PRI_COLORS[pri]}"></div>
@@ -1036,6 +1043,7 @@
             <div class="mob-card-row-bottom">
               <span class="priority-badge ${pri}">${PRIORITY_LABELS[pri]}</span>
               <span class="mob-card-amount">${formatCLP(e.monto)}</span>
+              ${pct > 0 ? `<span class="mob-card-pct">${pct}%</span>` : ''}
               <button class="mob-card-move" data-id="${e.id}">Mover →</button>
             </div>
           </div>

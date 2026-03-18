@@ -970,7 +970,37 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.22);
     }
 
-    .board-card-cover { height: 56px; }
+    .board-card-cover { height: 56px; position: relative; }
+
+    .board-cover-budget {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 8px 7px;
+    }
+
+    .board-cover-pct {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 4px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .board-cover-bar-track {
+      height: 4px;
+      background: rgba(255,255,255,0.28);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .board-cover-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
 
     .board-card-body { padding: 10px 12px 14px; }
 
@@ -1311,7 +1341,7 @@
     ];
 
     const PRIORITY_LABELS = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
-    const BOARD_COLORS = ['#0052cc','#00875a','#de350b','#6554c0','#d29034','#00aecc','#cd5a91','#172b4d'];
+    const BOARD_COLORS = ['#43a047','#00875a','#de350b','#6554c0','#d29034','#fb8c00','#cd5a91','#172b4d'];
 
     let currentUser = null;
     let currentBoard = null;
@@ -2144,10 +2174,25 @@
       grid.innerHTML = boards.map((b, i) => {
         const color = BOARD_COLORS[i % BOARD_COLORS.length];
         const stored = localStorage.getItem('cuentas_' + currentUser + '_' + b.id);
-        const count = stored ? JSON.parse(stored).length : 0;
+        const expArr = stored ? JSON.parse(stored) : [];
+        const count = expArr.length;
+        const budgetVal = parseInt(localStorage.getItem('presupuesto_' + currentUser + '_' + b.id) || '0', 10);
+        const spent = expArr
+          .filter(e => e.estado === 'carrito' || e.estado === 'pagado')
+          .reduce((s, e) => s + e.monto, 0);
+        const usedPct = budgetVal > 0 ? Math.min(Math.round(spent / budgetVal * 100), 100) : 0;
+        const over = budgetVal > 0 && spent > budgetVal;
+        const barColor = over ? '#ff5630' : (usedPct >= 70 ? '#ff991f' : 'rgba(255,255,255,0.85)');
+        const coverBudget = budgetVal > 0 ? `
+          <div class="board-cover-budget">
+            <div class="board-cover-pct">${usedPct}% utilizado</div>
+            <div class="board-cover-bar-track">
+              <div class="board-cover-bar-fill" style="width:${usedPct}%;background:${barColor}"></div>
+            </div>
+          </div>` : '';
         return `
           <div class="board-card" data-board-id="${b.id}">
-            <div class="board-card-cover" style="background:${color}"></div>
+            <div class="board-card-cover" style="background:${color}">${coverBudget}</div>
             <div class="board-card-body">
               <div class="board-card-name">${escapeHTML(b.name)}</div>
               <div class="board-card-meta">${count} ${count === 1 ? 'Gasto' : 'Gastos'}</div>
