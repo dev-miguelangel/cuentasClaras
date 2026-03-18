@@ -481,6 +481,7 @@
       -webkit-overflow-scrolling: touch;
       padding-bottom: var(--safe-bottom);
       animation: sheetUp 0.28s cubic-bezier(0.32,0.72,0,1);
+      position: relative;
     }
 
     @keyframes sheetUp {
@@ -1631,12 +1632,15 @@
     });
 
     document.getElementById('install-btn').addEventListener('click', async () => {
-      if (!_deferredPrompt) return;
-      _deferredPrompt.prompt();
-      const { outcome } = await _deferredPrompt.userChoice;
+      const prompt = _deferredPrompt;
       _deferredPrompt = null;
       closeSheet('install-sheet-overlay');
       localStorage.setItem(_installKey, '1');
+      if (!prompt) return;
+      try {
+        prompt.prompt();
+        await prompt.userChoice;
+      } catch (e) { /* ignore */ }
     });
 
     document.getElementById('install-sheet-close').addEventListener('click', () => {
