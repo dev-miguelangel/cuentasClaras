@@ -1087,6 +1087,49 @@
       max-width: 200px;
     }
 
+    /* ===== SHARE / IMPORT ===== */
+    .modal-wide { max-width: 500px; }
+
+    .share-tabs-pc {
+      display: flex; gap: 4px; margin-bottom: 16px;
+      background: #f4f5f7; border-radius: 8px; padding: 3px;
+    }
+    .share-tab-btn-pc {
+      flex: 1; padding: 8px 4px; border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      color: #5e6c84; background: transparent;
+      transition: all 0.15s;
+    }
+    .share-tab-btn-pc.active {
+      background: white; color: #172b4d; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .share-code-area-pc {
+      width: 100%; min-height: 88px; padding: 12px;
+      border: 2px solid #dfe1e6; border-radius: 8px;
+      font-size: 12px; font-family: 'SF Mono', 'Menlo', monospace;
+      color: #172b4d; resize: none; outline: none;
+      word-break: break-all; transition: border-color 0.2s;
+      margin-bottom: 12px;
+    }
+    .share-code-area-pc:focus { border-color: #0079bf; }
+    .share-qr-center-pc {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; padding: 8px 0;
+    }
+    .share-qr-box-pc {
+      background: white; border-radius: 10px;
+      padding: 10px; border: 2px solid #dfe1e6;
+      display: inline-block;
+    }
+    .share-url-text-pc {
+      font-size: 11px; color: #97a0af; text-align: center;
+      word-break: break-all; padding: 0 4px; line-height: 1.5;
+      max-height: 44px; overflow: hidden;
+    }
+    .pc-import-status {
+      font-size: 13px; min-height: 16px; margin-bottom: 10px; text-align: center;
+    }
+
     /* ===== IMPORT EXPENSES ===== */
     #board-name-modal-overlay .modal {
       max-height: 85vh;
@@ -1194,6 +1237,7 @@
       <span class="header-title">💳 CuentasRápidas</span>
       <div class="header-right">
         <span class="user-badge" id="boards-user-badge"></span>
+        <button class="btn-feedback" onclick="openImportModal()">📥 Importar</button>
         <button class="btn-feedback" onclick="openFeedbackModal()">💬 Feedback</button>
         <button class="btn-logout" id="boards-logout-btn">Salir</button>
       </div>
@@ -1213,6 +1257,7 @@
       </div>
       <div class="header-right">
         <span class="user-badge" id="user-badge"></span>
+        <button class="btn-feedback" id="share-board-btn-pc" onclick="openShareModal()">🔗 Compartir</button>
         <button class="btn-feedback" onclick="openFeedbackModal()">💬 Feedback</button>
         <button class="btn-logout" id="logout-btn">Salir</button>
       </div>
@@ -1279,6 +1324,55 @@
       <div class="modal-actions">
         <button class="btn-add" id="modal-add-btn">Agregar</button>
         <button class="btn-cancel" id="modal-cancel-btn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHARE MODAL -->
+  <div class="modal-overlay" id="share-modal-overlay">
+    <div class="modal modal-wide">
+      <h2>🔗 Compartir Tablero</h2>
+      <div class="share-tabs-pc">
+        <button class="share-tab-btn-pc active" data-tab="qr" onclick="showShareTabPC('qr')">QR / URL</button>
+        <button class="share-tab-btn-pc" data-tab="code" onclick="showShareTabPC('code')">Código</button>
+      </div>
+
+      <div id="share-tab-qr-pc">
+        <p style="font-size:13px;color:#5e6c84;margin-bottom:14px">Escanea el QR con otro dispositivo para importar el tablero.</p>
+        <div class="share-qr-center-pc">
+          <div class="share-qr-box-pc" id="share-qr-box-pc"></div>
+          <div class="share-url-text-pc" id="share-url-display-pc"></div>
+        </div>
+        <div class="modal-actions" style="margin-top:14px">
+          <button class="btn-add" id="share-copy-url-btn-pc"
+            onclick="copyToClipboardPC(_shareURLPC, this, '✓ URL Copiada')">Copiar URL</button>
+          <button class="btn-cancel" onclick="closeShareModal()">Cerrar</button>
+        </div>
+      </div>
+
+      <div id="share-tab-code-pc" style="display:none">
+        <p style="font-size:13px;color:#5e6c84;margin-bottom:12px">Copia este código y compártelo por cualquier mensajería.</p>
+        <textarea class="share-code-area-pc" id="share-code-text-pc" readonly></textarea>
+        <div class="modal-actions">
+          <button class="btn-add" id="share-copy-code-btn-pc"
+            onclick="copyToClipboardPC(document.getElementById('share-code-text-pc').value, this, '✓ Código Copiado')">Copiar Código</button>
+          <button class="btn-cancel" onclick="closeShareModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT MODAL -->
+  <div class="modal-overlay" id="import-modal-overlay">
+    <div class="modal">
+      <h2>📥 Importar Tablero</h2>
+      <p style="font-size:13px;color:#5e6c84;margin-bottom:14px">Pega aquí el código de un tablero compartido.</p>
+      <textarea class="share-code-area-pc" id="import-code-text-pc"
+        placeholder="Pega el código aquí..." style="min-height:100px"></textarea>
+      <div class="pc-import-status" id="pc-import-status"></div>
+      <div class="modal-actions">
+        <button class="btn-add" onclick="doImportPC()">Importar Tablero</button>
+        <button class="btn-cancel" onclick="closeImportModal()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -2356,6 +2450,22 @@
       document.getElementById('boards-user-badge').textContent = currentUser;
       document.getElementById('user-badge').textContent = currentUser;
       loadBoards();
+      // Import pending shared board (arrived via URL hash before login)
+      const pending = sessionStorage.getItem('pendingShare');
+      if (pending) {
+        sessionStorage.removeItem('pendingShare');
+        const data = decodeBoard(pending);
+        if (data && data.v && data.name) {
+          const importedName = importBoardFromData(data);
+          if (importedName) {
+            loadBoards();
+            document.getElementById('boards-view').style.display = 'flex';
+            renderBoards();
+            alert('Tablero "' + importedName + '" importado correctamente.');
+            return;
+          }
+        }
+      }
       document.getElementById('boards-view').style.display = 'flex';
       renderBoards();
     }
@@ -2387,6 +2497,7 @@
     document.getElementById('logout-btn').addEventListener('click', logout);
 
     // ===== INIT =====
+    checkShareHashPC();
     renderUserList();
     const savedUser = sessionStorage.getItem('currentUser');
     if (savedUser) login(savedUser);
@@ -2428,6 +2539,168 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
     }
+
+    // ===== SHARE / IMPORT =====
+    function encodeBoard(obj) {
+      try {
+        const json = JSON.stringify(obj);
+        const bytes = new TextEncoder().encode(json);
+        const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
+        return btoa(binary);
+      } catch(e) { return null; }
+    }
+
+    function decodeBoard(b64) {
+      try {
+        const binary = atob(b64.trim());
+        const bytes = new Uint8Array(binary.length).map((_, i) => binary.charCodeAt(i));
+        const json = new TextDecoder().decode(bytes);
+        return JSON.parse(json);
+      } catch(e) { return null; }
+    }
+
+    function exportBoardData() {
+      return {
+        v: 1,
+        name: currentBoard.name,
+        budget: budget,
+        expenses: expenses.map(e => ({
+          id: e.id, titulo: e.titulo, monto: e.monto,
+          estado: e.estado, prioridad: e.prioridad || 'gusto'
+        }))
+      };
+    }
+
+    function importBoardFromData(data, targetUser) {
+      const user = targetUser || currentUser;
+      if (!user || !data || !data.v || !data.name) return false;
+      try {
+        let name = data.name;
+        const storedBoards = JSON.parse(localStorage.getItem('tableros_' + user) || '[]');
+        const names = storedBoards.map(b => b.name);
+        if (names.includes(name)) {
+          let i = 2;
+          while (names.includes(name + ' (' + i + ')')) i++;
+          name = name + ' (' + i + ')';
+        }
+        const bid = 'b' + Date.now();
+        storedBoards.push({ id: bid, name });
+        localStorage.setItem('tableros_' + user, JSON.stringify(storedBoards));
+        if (data.expenses && data.expenses.length) {
+          const exps = data.expenses.map((e, i) => ({
+            id: 'imp' + Date.now() + i,
+            titulo: e.titulo, monto: e.monto,
+            estado: e.estado || 'por_pagar',
+            prioridad: e.prioridad || 'gusto'
+          }));
+          localStorage.setItem('cuentas_' + user + '_' + bid, JSON.stringify(exps));
+        }
+        if (data.budget && data.budget > 0) {
+          localStorage.setItem('presupuesto_' + user + '_' + bid, String(data.budget));
+        }
+        return name;
+      } catch(e) { return false; }
+    }
+
+    function copyToClipboardPC(text, btn, successLabel) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = successLabel || '✓ Copiado';
+        setTimeout(() => { btn.textContent = orig; }, 2000);
+      }).catch(() => {});
+    }
+
+    let _shareURLPC = '';
+
+    function openShareModal() {
+      if (!currentBoard) return;
+      const data = exportBoardData();
+      const code = encodeBoard(data);
+      if (!code) return;
+
+      document.getElementById('share-code-text-pc').value = code;
+      _shareURLPC = window.location.origin + window.location.pathname + '#share=' + code;
+      document.getElementById('share-url-display-pc').textContent = _shareURLPC;
+
+      const qrContainer = document.getElementById('share-qr-box-pc');
+      qrContainer.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        try {
+          new QRCode(qrContainer, {
+            text: _shareURLPC,
+            width: 160, height: 160,
+            colorDark: '#172b4d', colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.L
+          });
+        } catch(e) {
+          qrContainer.innerHTML = '<p style="color:#5e6c84;font-size:12px;text-align:center;padding:16px">URL demasiado larga.<br>Usa pestaña Código.</p>';
+        }
+      } else {
+        qrContainer.innerHTML = '<p style="color:#5e6c84;font-size:12px;text-align:center;padding:16px">QR no disponible sin conexión.</p>';
+      }
+
+      showShareTabPC('qr');
+      document.getElementById('share-modal-overlay').classList.add('active');
+    }
+
+    function closeShareModal() {
+      document.getElementById('share-modal-overlay').classList.remove('active');
+    }
+
+    function showShareTabPC(tab) {
+      document.querySelectorAll('.share-tab-btn-pc').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      document.getElementById('share-tab-qr-pc').style.display = tab === 'qr' ? '' : 'none';
+      document.getElementById('share-tab-code-pc').style.display = tab === 'code' ? '' : 'none';
+    }
+
+    function openImportModal() {
+      document.getElementById('import-code-text-pc').value = '';
+      document.getElementById('pc-import-status').textContent = '';
+      document.getElementById('import-modal-overlay').classList.add('active');
+      setTimeout(() => document.getElementById('import-code-text-pc').focus(), 100);
+    }
+
+    function closeImportModal() {
+      document.getElementById('import-modal-overlay').classList.remove('active');
+    }
+
+    function doImportPC() {
+      const code = document.getElementById('import-code-text-pc').value.trim();
+      const status = document.getElementById('pc-import-status');
+      if (!code) { status.style.color = '#de350b'; status.textContent = 'Pega un código válido.'; return; }
+      const data = decodeBoard(code);
+      if (!data || !data.v || !data.name) {
+        status.style.color = '#de350b'; status.textContent = 'Código inválido o corrupto.'; return;
+      }
+      const importedName = importBoardFromData(data);
+      if (!importedName) { status.style.color = '#de350b'; status.textContent = 'Error al importar.'; return; }
+      closeImportModal();
+      loadBoards();
+      renderBoards();
+      alert('Tablero "' + importedName + '" importado correctamente.');
+    }
+
+    function checkShareHashPC() {
+      const hash = window.location.hash;
+      if (!hash.startsWith('#share=')) return;
+      const code = hash.slice('#share='.length);
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      const data = decodeBoard(code);
+      if (!data || !data.v || !data.name) return;
+      if (currentUser) {
+        const importedName = importBoardFromData(data);
+        if (importedName) { loadBoards(); renderBoards(); alert('Tablero "' + importedName + '" importado correctamente.'); }
+      } else {
+        sessionStorage.setItem('pendingShare', code);
+      }
+    }
+
+    document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeShareModal();
+    });
+    document.getElementById('import-modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeImportModal();
+    });
 
     // ===== FEEDBACK =====
     function fbRate(cat, val) {
@@ -2488,6 +2761,7 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>emailjs.init('u1PGzoaxrjwOf3HLq');</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- INSTALL TOAST (desktop) -->
   <div id="install-toast" style="display:none;position:fixed;bottom:24px;right:24px;z-index:500;
