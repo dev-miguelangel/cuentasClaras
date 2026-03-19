@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CuentasRápidas – Escritorio</title>
-  <meta name="description" content="Organiza tus gastos con un tablero Kanban visual. Sin registro, sin apps, directo en tu navegador." />
+  <meta name="description"
+    content="Organiza tus gastos con un tablero Kanban visual. Sin registro, sin apps, directo en tu navegador." />
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icon.svg" />
   <meta name="theme-color" content="#0052cc" />
@@ -193,7 +194,9 @@
       line-height: 1;
     }
 
-    .fb-star.active { color: #f5a623; }
+    .fb-star.active {
+      color: #f5a623;
+    }
 
     .fb-textarea {
       width: 100%;
@@ -209,7 +212,9 @@
       font-family: inherit;
     }
 
-    .fb-textarea:focus { border-color: #0079bf; }
+    .fb-textarea:focus {
+      border-color: #0079bf;
+    }
 
     .fb-char-count {
       font-size: 11px;
@@ -321,13 +326,13 @@
       cursor: pointer;
       border-radius: 8px;
       padding: 10px 12px;
-      background: rgba(9,30,66,0.04);
+      background: rgba(9, 30, 66, 0.04);
       transition: background 0.2s;
       position: relative;
     }
 
     .budget-bar-wrap:hover {
-      background: rgba(9,30,66,0.08);
+      background: rgba(9, 30, 66, 0.08);
     }
 
     .budget-bar-label-row {
@@ -390,41 +395,78 @@
     /* ===== BOARD BUDGET BANNER ===== */
     #board-budget-row {
       flex-shrink: 0;
-      background: rgba(0,0,0,0.1);
+      background: rgba(0, 0, 0, 0.1);
       padding: 10px 20px 12px;
     }
+
     #board-budget-row .budget-empty {
       margin-top: 0;
       max-width: 520px;
-      border: 1.5px dashed rgba(255,255,255,0.35);
+      border: 1.5px dashed rgba(255, 255, 255, 0.35);
       border-radius: 10px;
       background: transparent;
       padding: 10px 16px;
       transition: border-color 0.2s, background 0.2s;
     }
+
     #board-budget-row .budget-empty:hover {
-      border-color: rgba(255,255,255,0.65);
-      background: rgba(255,255,255,0.06);
+      border-color: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.06);
     }
-    #board-budget-row .budget-empty-title { color: rgba(255,255,255,0.9); }
-    #board-budget-row .budget-empty-sub   { color: rgba(255,255,255,0.48); }
+
+    #board-budget-row .budget-empty-title {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    #board-budget-row .budget-empty-sub {
+      color: rgba(255, 255, 255, 0.48);
+    }
+
     #board-budget-row .budget-bar-wrap {
       margin-top: 0;
       max-width: 520px;
-      background: rgba(0,0,0,0.18);
+      background: rgba(0, 0, 0, 0.18);
       border-radius: 10px;
       padding: 12px 16px;
       transition: background 0.2s;
     }
-    #board-budget-row .budget-bar-wrap:hover { background: rgba(0,0,0,0.26); }
-    #board-budget-row .budget-bar-label-row   { margin-bottom: 9px; }
-    #board-budget-row .budget-bar-label-left  { color: rgba(255,255,255,0.65); }
-    #board-budget-row .budget-bar-label-right { color: rgba(255,255,255,0.5); }
-    #board-budget-row .budget-bar-track       { background: rgba(255,255,255,0.18); }
-    #board-budget-row .budget-meta            { margin-top: 9px; }
-    #board-budget-row .budget-remaining       { font-size: 13px; font-weight: 700; }
-    #board-budget-row .budget-edit-hint       { color: rgba(255,255,255,0.38); }
-    #board-budget-row .budget-bar-wrap:hover .budget-edit-hint { color: rgba(255,255,255,0.72); }
+
+    #board-budget-row .budget-bar-wrap:hover {
+      background: rgba(0, 0, 0, 0.26);
+    }
+
+    #board-budget-row .budget-bar-label-row {
+      margin-bottom: 9px;
+    }
+
+    #board-budget-row .budget-bar-label-left {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    #board-budget-row .budget-bar-label-right {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    #board-budget-row .budget-bar-track {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    #board-budget-row .budget-meta {
+      margin-top: 9px;
+    }
+
+    #board-budget-row .budget-remaining {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    #board-budget-row .budget-edit-hint {
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    #board-budget-row .budget-bar-wrap:hover .budget-edit-hint {
+      color: rgba(255, 255, 255, 0.72);
+    }
 
     /* ===== ANALYTICS COLUMN ===== */
     .analytics-column {
@@ -616,8 +658,15 @@
       transition: color 0.15s, background 0.15s;
     }
 
-    .card-delete:hover { color: #de350b; background: #ffebe6; }
-    .card-edit:hover   { color: #0079bf; background: #e8f4fd; }
+    .card-delete:hover {
+      color: #de350b;
+      background: #ffebe6;
+    }
+
+    .card-edit:hover {
+      color: #0079bf;
+      background: #e8f4fd;
+    }
 
     /* Add card button */
     .add-card-btn {
@@ -942,7 +991,7 @@
     }
 
     .boards-heading {
-      color: rgba(255,255,255,0.9);
+      color: rgba(255, 255, 255, 0.9);
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 18px;
@@ -961,16 +1010,19 @@
       overflow: hidden;
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       position: relative;
     }
 
     .board-card:not(.board-card-new):hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
     }
 
-    .board-card-cover { height: 56px; position: relative; }
+    .board-card-cover {
+      height: 56px;
+      position: relative;
+    }
 
     .board-cover-budget {
       position: absolute;
@@ -984,14 +1036,14 @@
     .board-cover-pct {
       font-size: 11px;
       font-weight: 700;
-      color: rgba(255,255,255,0.92);
+      color: rgba(255, 255, 255, 0.92);
       margin-bottom: 4px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     .board-cover-bar-track {
       height: 4px;
-      background: rgba(255,255,255,0.28);
+      background: rgba(255, 255, 255, 0.28);
       border-radius: 99px;
       overflow: hidden;
     }
@@ -1002,7 +1054,9 @@
       transition: width 0.3s ease;
     }
 
-    .board-card-body { padding: 10px 12px 14px; }
+    .board-card-body {
+      padding: 10px 12px 14px;
+    }
 
     .board-card-name {
       font-size: 14px;
@@ -1012,13 +1066,16 @@
       word-break: break-word;
     }
 
-    .board-card-meta { font-size: 12px; color: #97a0af; }
+    .board-card-meta {
+      font-size: 12px;
+      color: #97a0af;
+    }
 
     .board-card-delete {
       position: absolute;
       top: 6px;
       right: 6px;
-      background: rgba(0,0,0,0.28);
+      background: rgba(0, 0, 0, 0.28);
       border: none;
       color: white;
       width: 22px;
@@ -1034,12 +1091,17 @@
       line-height: 1;
     }
 
-    .board-card:hover .board-card-delete { opacity: 1; }
-    .board-card-delete:hover { background: rgba(222,53,11,0.85); }
+    .board-card:hover .board-card-delete {
+      opacity: 1;
+    }
+
+    .board-card-delete:hover {
+      background: rgba(222, 53, 11, 0.85);
+    }
 
     .board-card-new {
-      background: rgba(255,255,255,0.18);
-      border: 2px dashed rgba(255,255,255,0.4);
+      background: rgba(255, 255, 255, 0.18);
+      border: 2px dashed rgba(255, 255, 255, 0.4);
       border-radius: 10px;
       min-height: 110px;
       display: flex;
@@ -1053,18 +1115,31 @@
     }
 
     .board-card-new:hover {
-      background: rgba(255,255,255,0.28);
-      border-color: rgba(255,255,255,0.7);
+      background: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.7);
       transform: translateY(-2px);
     }
 
-    .board-card-new-icon { font-size: 26px; color: rgba(255,255,255,0.75); line-height: 1; }
-    .board-card-new-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); }
+    .board-card-new-icon {
+      font-size: 26px;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1;
+    }
 
-    .header-left { display: flex; align-items: center; gap: 12px; }
+    .board-card-new-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
     .btn-back {
-      background: rgba(255,255,255,0.18);
+      background: rgba(255, 255, 255, 0.18);
       color: white;
       border: none;
       padding: 6px 12px;
@@ -1075,7 +1150,9 @@
       white-space: nowrap;
     }
 
-    .btn-back:hover { background: rgba(255,255,255,0.32); }
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.32);
+    }
 
     .header-board-name {
       color: white;
@@ -1088,46 +1165,90 @@
     }
 
     /* ===== SHARE / IMPORT ===== */
-    .modal-wide { max-width: 500px; }
+    .modal-wide {
+      max-width: 500px;
+    }
 
     .share-tabs-pc {
-      display: flex; gap: 4px; margin-bottom: 16px;
-      background: #f4f5f7; border-radius: 8px; padding: 3px;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      background: #f4f5f7;
+      border-radius: 8px;
+      padding: 3px;
     }
+
     .share-tab-btn-pc {
-      flex: 1; padding: 8px 4px; border: none; border-radius: 6px;
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      color: #5e6c84; background: transparent;
+      flex: 1;
+      padding: 8px 4px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #5e6c84;
+      background: transparent;
       transition: all 0.15s;
     }
+
     .share-tab-btn-pc.active {
-      background: white; color: #172b4d; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      background: white;
+      color: #172b4d;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
+
     .share-code-area-pc {
-      width: 100%; min-height: 88px; padding: 12px;
-      border: 2px solid #dfe1e6; border-radius: 8px;
-      font-size: 12px; font-family: 'SF Mono', 'Menlo', monospace;
-      color: #172b4d; resize: none; outline: none;
-      word-break: break-all; transition: border-color 0.2s;
+      width: 100%;
+      min-height: 88px;
+      padding: 12px;
+      border: 2px solid #dfe1e6;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      color: #172b4d;
+      resize: none;
+      outline: none;
+      word-break: break-all;
+      transition: border-color 0.2s;
       margin-bottom: 12px;
     }
-    .share-code-area-pc:focus { border-color: #0079bf; }
-    .share-qr-center-pc {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 12px; padding: 8px 0;
+
+    .share-code-area-pc:focus {
+      border-color: #0079bf;
     }
+
+    .share-qr-center-pc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
     .share-qr-box-pc {
-      background: white; border-radius: 10px;
-      padding: 10px; border: 2px solid #dfe1e6;
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      border: 2px solid #dfe1e6;
       display: inline-block;
     }
+
     .share-url-text-pc {
-      font-size: 11px; color: #97a0af; text-align: center;
-      word-break: break-all; padding: 0 4px; line-height: 1.5;
-      max-height: 44px; overflow: hidden;
+      font-size: 11px;
+      color: #97a0af;
+      text-align: center;
+      word-break: break-all;
+      padding: 0 4px;
+      line-height: 1.5;
+      max-height: 44px;
+      overflow: hidden;
     }
+
     .pc-import-status {
-      font-size: 13px; min-height: 16px; margin-bottom: 10px; text-align: center;
+      font-size: 13px;
+      min-height: 16px;
+      margin-bottom: 10px;
+      text-align: center;
     }
 
     /* ===== IMPORT EXPENSES ===== */
@@ -1152,7 +1273,9 @@
       display: block;
     }
 
-    .import-board-group { margin-bottom: 12px; }
+    .import-board-group {
+      margin-bottom: 12px;
+    }
 
     .import-board-name {
       font-size: 11px;
@@ -1183,8 +1306,15 @@
       user-select: none;
     }
 
-    .import-expense-item:hover { border-color: #97a0af; background: #f4f5f7; }
-    .import-expense-item.selected { border-color: #0079bf; background: #e8f4fd; }
+    .import-expense-item:hover {
+      border-color: #97a0af;
+      background: #f4f5f7;
+    }
+
+    .import-expense-item.selected {
+      border-color: #0079bf;
+      background: #e8f4fd;
+    }
 
     .import-expense-item input[type="checkbox"] {
       accent-color: #0079bf;
@@ -1338,7 +1468,8 @@
       </div>
 
       <div id="share-tab-qr-pc">
-        <p style="font-size:13px;color:#5e6c84;margin-bottom:14px">Escanea el QR con otro dispositivo para importar el tablero.</p>
+        <p style="font-size:13px;color:#5e6c84;margin-bottom:14px">Escanea el QR con otro dispositivo para importar el
+          tablero.</p>
         <div class="share-qr-center-pc">
           <div class="share-qr-box-pc" id="share-qr-box-pc"></div>
           <div class="share-url-text-pc" id="share-url-display-pc"></div>
@@ -1351,11 +1482,13 @@
       </div>
 
       <div id="share-tab-code-pc" style="display:none">
-        <p style="font-size:13px;color:#5e6c84;margin-bottom:12px">Copia este código y compártelo por cualquier mensajería.</p>
+        <p style="font-size:13px;color:#5e6c84;margin-bottom:12px">Copia este código y compártelo por cualquier
+          mensajería.</p>
         <textarea class="share-code-area-pc" id="share-code-text-pc" readonly></textarea>
         <div class="modal-actions">
           <button class="btn-add" id="share-copy-code-btn-pc"
-            onclick="copyToClipboardPC(document.getElementById('share-code-text-pc').value, this, '✓ Código Copiado')">Copiar Código</button>
+            onclick="copyToClipboardPC(document.getElementById('share-code-text-pc').value, this, '✓ Código Copiado')">Copiar
+            Código</button>
           <button class="btn-cancel" onclick="closeShareModal()">Cerrar</button>
         </div>
       </div>
@@ -1367,8 +1500,8 @@
     <div class="modal">
       <h2>📥 Importar Tablero</h2>
       <p style="font-size:13px;color:#5e6c84;margin-bottom:14px">Pega aquí el código de un tablero compartido.</p>
-      <textarea class="share-code-area-pc" id="import-code-text-pc"
-        placeholder="Pega el código aquí..." style="min-height:100px"></textarea>
+      <textarea class="share-code-area-pc" id="import-code-text-pc" placeholder="Pega el código aquí..."
+        style="min-height:100px"></textarea>
       <div class="pc-import-status" id="pc-import-status"></div>
       <div class="modal-actions">
         <button class="btn-add" onclick="doImportPC()">Importar Tablero</button>
@@ -1435,7 +1568,7 @@
     ];
 
     const PRIORITY_LABELS = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
-    const BOARD_COLORS = ['#43a047','#00875a','#de350b','#6554c0','#d29034','#fb8c00','#cd5a91','#172b4d'];
+    const BOARD_COLORS = ['#43a047', '#00875a', '#de350b', '#6554c0', '#d29034', '#fb8c00', '#cd5a91', '#172b4d'];
 
     let currentUser = null;
     let currentBoard = null;
@@ -1537,10 +1670,10 @@
           const over = boardSpent > budget;
           const pct = over ? 0 : Math.max(((budget - boardSpent) / budget) * 100, 0);
           let c;
-          if (over)         c = '#de350b';
+          if (over) c = '#de350b';
           else if (pct <= 10) c = '#ff5630';
           else if (pct <= 30) c = '#ff991f';
-          else                c = '#36b37e';
+          else c = '#36b37e';
           totalStyle = `style="color:${c}"`;
         }
 
@@ -1718,9 +1851,9 @@
       const { ctx, W, H } = c;
 
       const COLORS = { vital: '#de350b', gusto: '#4fc3f7', capricho: '#6554c0' };
-      const LBLS   = { vital: 'Vital',   gusto: 'Gusto',   capricho: 'Capricho' };
+      const LBLS = { vital: 'Vital', gusto: 'Gusto', capricho: 'Capricho' };
 
-      const items  = expenses.filter(e => e.estado === colId);
+      const items = expenses.filter(e => e.estado === colId);
       const totals = { vital: 0, gusto: 0, capricho: 0 };
       items.forEach(e => { totals[e.prioridad || 'gusto'] += e.monto; });
       const grand = totals.vital + totals.gusto + totals.capricho;
@@ -1785,7 +1918,7 @@
       const legendY = cy + outerR + 14;
       const rowH = 17;
       entries.forEach(([key, val], i) => {
-        const y   = legendY + i * rowH;
+        const y = legendY + i * rowH;
         const pct = Math.round((val / grand) * 100);
 
         ctx.beginPath();
@@ -1938,12 +2071,12 @@
       const touch = e.touches[0];
       const card = e.currentTarget;
       const rect = card.getBoundingClientRect();
-      _touchDragId   = card.dataset.id;
-      _touchStartX   = touch.clientX;
-      _touchStartY   = touch.clientY;
-      _touchOffsetX  = touch.clientX - rect.left;
-      _touchOffsetY  = touch.clientY - rect.top;
-      _touchIsDragging  = false;
+      _touchDragId = card.dataset.id;
+      _touchStartX = touch.clientX;
+      _touchStartY = touch.clientY;
+      _touchOffsetX = touch.clientX - rect.left;
+      _touchOffsetY = touch.clientY - rect.top;
+      _touchIsDragging = false;
       _touchTargetColId = null;
     }
 
@@ -1964,7 +2097,7 @@
           position: 'fixed', width: rect.width + 'px',
           opacity: '0.85', pointerEvents: 'none', zIndex: '9999',
           left: (touch.clientX - _touchOffsetX) + 'px',
-          top:  (touch.clientY - _touchOffsetY) + 'px',
+          top: (touch.clientY - _touchOffsetY) + 'px',
           transform: 'rotate(2deg) scale(1.03)',
           boxShadow: '0 8px 24px rgba(9,30,66,0.25)',
           transition: 'none', margin: '0',
@@ -1975,7 +2108,7 @@
 
       e.preventDefault();
       _touchClone.style.left = (touch.clientX - _touchOffsetX) + 'px';
-      _touchClone.style.top  = (touch.clientY - _touchOffsetY) + 'px';
+      _touchClone.style.top = (touch.clientY - _touchOffsetY) + 'px';
 
       _touchClone.style.visibility = 'hidden';
       const el = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -2476,7 +2609,7 @@
       sessionStorage.setItem('nudgeSeen', '1');
       var el = document.getElementById('feedback-nudge-pc');
       if (!el) return;
-      setTimeout(function() { el.style.display = 'flex'; }, 1800);
+      setTimeout(function () { el.style.display = 'flex'; }, 100);
     }
 
     function logout() {
@@ -2545,10 +2678,6 @@
       localStorage.setItem(_installKey, '1');
     });
 
-    document.getElementById('feedback-nudge-close-pc').addEventListener('click', function() {
-      document.getElementById('feedback-nudge-pc').style.display = 'none';
-    });
-
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
     }
@@ -2560,7 +2689,7 @@
         const bytes = new TextEncoder().encode(json);
         const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
         return btoa(binary);
-      } catch(e) { return null; }
+      } catch (e) { return null; }
     }
 
     function decodeBoard(b64) {
@@ -2569,7 +2698,7 @@
         const bytes = new Uint8Array(binary.length).map((_, i) => binary.charCodeAt(i));
         const json = new TextDecoder().decode(bytes);
         return JSON.parse(json);
-      } catch(e) { return null; }
+      } catch (e) { return null; }
     }
 
     function exportBoardData() {
@@ -2612,7 +2741,7 @@
           localStorage.setItem('presupuesto_' + user + '_' + bid, String(data.budget));
         }
         return name;
-      } catch(e) { return false; }
+      } catch (e) { return false; }
     }
 
     function copyToClipboardPC(text, btn, successLabel) {
@@ -2620,7 +2749,7 @@
         const orig = btn.textContent;
         btn.textContent = successLabel || '✓ Copiado';
         setTimeout(() => { btn.textContent = orig; }, 2000);
-      }).catch(() => {});
+      }).catch(() => { });
     }
 
     var _shareURLPC = '';
@@ -2645,7 +2774,7 @@
             colorDark: '#172b4d', colorLight: '#ffffff',
             correctLevel: QRCode.CorrectLevel.L
           });
-        } catch(e) {
+        } catch (e) {
           qrContainer.innerHTML = '<p style="color:#5e6c84;font-size:12px;text-align:center;padding:16px">URL demasiado larga.<br>Usa pestaña Código.</p>';
         }
       } else {
@@ -2708,17 +2837,17 @@
       }
     }
 
-    document.getElementById('share-modal-overlay').addEventListener('click', function(e) {
+    document.getElementById('share-modal-overlay').addEventListener('click', function (e) {
       if (e.target === this) closeShareModal();
     });
-    document.getElementById('import-modal-overlay').addEventListener('click', function(e) {
+    document.getElementById('import-modal-overlay').addEventListener('click', function (e) {
       if (e.target === this) closeImportModal();
     });
 
     // ===== FEEDBACK =====
     function fbRate(cat, val) {
       _fbScores[cat] = _fbScores[cat] === val ? 0 : val;
-      document.querySelectorAll('#fb-' + cat + ' .fb-star').forEach(function(s, i) {
+      document.querySelectorAll('#fb-' + cat + ' .fb-star').forEach(function (s, i) {
         s.classList.toggle('active', i < _fbScores[cat]);
       });
     }
@@ -2731,7 +2860,7 @@
       document.getElementById('feedback-modal-overlay').classList.remove('active');
     }
 
-    document.getElementById('feedback-modal-overlay').addEventListener('click', function(e) {
+    document.getElementById('feedback-modal-overlay').addEventListener('click', function (e) {
       if (e.target === this) closeFeedbackModal();
     });
 
@@ -2742,29 +2871,29 @@
       btn.textContent = 'Enviando...';
       status.textContent = '';
       emailjs.send('service_wr18xhk', 'template_rxr4zig', {
-        to_email:        'dev.miguelangel.jaimen@gmail.com',
-        utilidad:        _fbScores.utilidad + '/5',
-        usabilidad:      _fbScores.usabilidad + '/5',
+        to_email: 'dev.miguelangel.jaimen@gmail.com',
+        utilidad: _fbScores.utilidad + '/5',
+        usabilidad: _fbScores.usabilidad + '/5',
         funcionalidades: _fbScores.funcionalidades + '/5',
-        mensaje:         document.getElementById('fb-mensaje').value.trim(),
-        version:         'Escritorio'
-      }).then(function() {
+        mensaje: document.getElementById('fb-mensaje').value.trim(),
+        version: 'Escritorio'
+      }).then(function () {
         btn.textContent = '¡Enviado! ✓';
         status.style.color = '#36b37e';
         status.textContent = 'Gracias por tu feedback.';
-        setTimeout(function() {
+        setTimeout(function () {
           closeFeedbackModal();
           btn.disabled = false;
           btn.textContent = 'Enviar';
           status.textContent = '';
           _fbScores = { utilidad: 0, usabilidad: 0, funcionalidades: 0 };
-          ['utilidad','usabilidad','funcionalidades'].forEach(function(c) {
-            document.querySelectorAll('#fb-' + c + ' .fb-star').forEach(function(s) { s.classList.remove('active'); });
+          ['utilidad', 'usabilidad', 'funcionalidades'].forEach(function (c) {
+            document.querySelectorAll('#fb-' + c + ' .fb-star').forEach(function (s) { s.classList.remove('active'); });
           });
           document.getElementById('fb-mensaje').value = '';
           document.getElementById('fb-char-num').textContent = '0';
         }, 1800);
-      }, function() {
+      }, function () {
         btn.disabled = false;
         btn.textContent = 'Enviar';
         status.style.color = '#de350b';
@@ -2782,12 +2911,13 @@
     align-items:center;gap:14px;max-width:320px;animation:fadeInUp 0.3s ease">
     <span style="font-size:30px;line-height:1;flex-shrink:0">💬</span>
     <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:700">¿Cómo fue tu experiencia?</div>
+      <div style="font-size:14px;font-weight:700">Recuerda comentar tu experiencia.</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:3px">
-        Clic en <strong style="color:white">💬 Feedback</strong> en la barra de arriba.
+        Clic en <strong style="color:white">💬 Feedback</strong> en la barra de arriba y deja tu opinión en 30 segundos,
+        gracias!.
       </div>
     </div>
-    <button id="feedback-nudge-close-pc" style="background:rgba(255,255,255,0.18);border:none;color:white;
+    <button id="feedback-nudge-close-pc" onclick="document.getElementById('feedback-nudge-pc').style.display='none'" style="background:rgba(255,255,255,0.18);border:none;color:white;
       cursor:pointer;font-size:13px;font-weight:600;padding:7px 12px;border-radius:8px;
       white-space:nowrap;flex-shrink:0">OK</button>
   </div>
@@ -2810,8 +2940,15 @@
   </div>
   <style>
     @keyframes fadeInUp {
-      from { opacity:0; transform:translateY(12px); }
-      to   { opacity:1; transform:translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </body>
