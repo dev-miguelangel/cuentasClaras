@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CuentasRápidas – Organiza Tus Gastos Con Un Tablero Kanban</title>
   <meta name="description"
-    content="CuentasRápidas es la forma más simple de organizar tus gastos. Un tablero Kanban en tu navegador, sin registro, sin apps, sin complicaciones. Gratis y funciona offline." />
+    content="Organiza y comparte tus gastos con un tablero Kanban visual. Sin registro, sin servidor. Comparte por QR o código con tu pareja o familia. Gratis y funciona offline en Chile." />
   <meta name="keywords"
-    content="gastos personales, control de gastos, tablero kanban, finanzas personales, presupuesto, pesos chilenos" />
+    content="gastos personales, control de gastos, tablero kanban, finanzas personales, presupuesto, pesos chilenos, compartir gastos pareja, app gastos familia, control gastos compartido Chile, app gratis control gastos Chile" />
   <meta name="author" content="CuentasRápidas" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://cuentasrapidas.app/" />
@@ -18,14 +18,14 @@
   <meta property="og:url" content="https://cuentasrapidas.app/" />
   <meta property="og:title" content="CuentasRápidas – Organiza Tus Gastos Con Un Tablero Kanban" />
   <meta property="og:description"
-    content="Sin registro. Sin apps. Solo abre el navegador y empieza a organizar tus gastos al instante con un tablero Kanban visual." />
+    content="Sin registro. Sin servidor. Comparte tus gastos por QR o código con tu pareja o familia. Organiza tus cuentas con un tablero Kanban visual — gratis y funciona offline." />
   <meta property="og:locale" content="es_CL" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="CuentasRápidas – Organiza Tus Gastos Con Un Tablero Kanban" />
   <meta name="twitter:description"
-    content="Sin registro. Sin apps. Solo abre el navegador y empieza a organizar tus gastos al instante." />
+    content="Sin registro. Sin servidor. Comparte tableros por QR con tu pareja o familia. Organiza tus gastos con un tablero Kanban visual — gratis." />
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -957,6 +957,11 @@
       }
     }
 
+    /* --- Tablet share visual (≤ 900px) --- */
+    @media (max-width: 900px) {
+      .share-visual-box { padding: 16px; }
+    }
+
     /* --- Mobile (≤ 768px) --- */
     @media (max-width: 768px) {
       .hero {
@@ -1219,6 +1224,101 @@
       }
     }
 
+    /* ===== SHARE SECTION ===== */
+    .share-methods { display: flex; flex-direction: column; margin-bottom: 24px; }
+
+    .share-method-item {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .share-method-item:last-child { border-bottom: none; }
+
+    .share-method-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--bg); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    .share-method-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .share-method-desc { font-size: 14px; color: var(--text-light); line-height: 1.55; }
+
+    .share-note {
+      background: #f0fff4; border: 1.5px solid #b3f5d4;
+      border-radius: 10px; padding: 14px 16px;
+      font-size: 14px; color: var(--text-mid); line-height: 1.55;
+    }
+
+    .share-visual-box {
+      background: linear-gradient(140deg, #0052cc 0%, #0079bf 100%);
+      border-radius: 16px; padding: 22px; box-shadow: var(--shadow-lg);
+    }
+
+    .share-visual-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+      text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 12px;
+    }
+
+    .share-visual-sheet {
+      background: rgba(255,255,255,0.12); border-radius: 10px; padding: 14px; margin-bottom: 14px;
+    }
+
+    .share-visual-sheet-title {
+      font-size: 14px; font-weight: 700; color: white; margin-bottom: 10px;
+    }
+
+    .share-visual-tabs {
+      background: rgba(255,255,255,0.12); border-radius: 6px;
+      display: flex; padding: 3px; gap: 3px; margin-bottom: 12px;
+    }
+
+    .share-visual-tab {
+      flex: 1; padding: 6px 0; text-align: center;
+      font-size: 11px; font-weight: 600; border-radius: 4px; color: rgba(255,255,255,0.55);
+    }
+    .share-visual-tab.active { background: white; color: #0052cc; font-weight: 700; }
+
+    .share-visual-qr {
+      background: white; border-radius: 8px; padding: 12px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 10px;
+    }
+
+    .share-visual-copy {
+      background: rgba(255,255,255,0.9); border-radius: 6px; padding: 9px 12px;
+      text-align: center; font-size: 12px; font-weight: 700; color: #0052cc;
+    }
+
+    .share-visual-divider {
+      display: flex; justify-content: center; gap: 8px; margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .share-visual-channel {
+      font-size: 10px; color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.1); padding: 3px 10px; border-radius: 99px;
+    }
+
+    .share-visual-result {
+      background: rgba(255,255,255,0.12); border-radius: 10px; padding: 14px;
+    }
+
+    .share-visual-result-header {
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.12); margin-bottom: 10px;
+    }
+
+    .share-visual-result-title { font-size: 13px; font-weight: 700; color: white; }
+    .share-visual-result-sub { font-size: 11px; color: rgba(255,255,255,0.55); }
+
+    .share-visual-card {
+      background: rgba(255,255,255,0.08); border-radius: 5px; padding: 7px 10px;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+    }
+    .share-visual-card:last-child { margin-bottom: 0; }
+    .share-visual-card-stripe { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+    .share-visual-card-name { font-size: 11px; color: rgba(255,255,255,0.88); flex: 1; }
+    .share-visual-card-amount { font-size: 11px; font-weight: 700; color: white; }
+
     /* ===== UTILITIES ===== */
     .text-center {
       text-align: center;
@@ -1372,6 +1472,7 @@
             <a href="#funciones" class="nav-link" role="listitem">Funciones</a>
             <a href="#como-funciona" class="nav-link" role="listitem">Cómo Funciona</a>
             <a href="#prioridades" class="nav-link" role="listitem">Prioridades</a>
+            <a href="#compartir" class="nav-link" role="listitem">Compartir</a>
             <a href="#feedback" class="nav-link" role="listitem">Feedback</a>
             <a href="#demo" class="nav-cta" role="listitem">Probar Gratis</a>
           </div>
@@ -1389,7 +1490,7 @@
           <div class="hero-text">
             <div class="hero-badge" role="note">
               <span class="hero-badge-dot" aria-hidden="true"></span>
-              100% Gratis · Sin Registro · Funciona Offline
+              100% Gratis · Sin Registro · Funciona Offline · Comparte Por QR
             </div>
             <h1 id="hero-heading">
               Tus gastos<br>
@@ -1397,7 +1498,7 @@
             </h1>
             <p class="hero-sub">
               Arrastra, mueve y prioriza tus cuentas con un tablero Kanban visual.
-              Sin apps, sin contraseñas, sin complicaciones — solo abre el navegador y listo.
+              Comparte tu tablero con tu pareja o familia en segundos — por QR, URL o WhatsApp, sin servidor.
             </p>
             <div class="hero-actions">
               <a href="index_pc.html" class="btn-hero-primary" aria-label="Abrir demo para escritorio">
@@ -1577,8 +1678,8 @@
 
           <article class="feature-card" role="listitem">
             <div class="feature-icon" style="background:#f0fff4" aria-hidden="true">🔗</div>
-            <h3 class="feature-title">Comparte Sin Servidor</h3>
-            <p class="feature-desc">Exporta cualquier tablero como un código de texto o un QR y compártelo por WhatsApp, iMessage o cualquier mensajería. El otro dispositivo importa los datos al instante, sin cuenta ni conexión al servidor.</p>
+            <h3 class="feature-title">Comparte Gastos Con Tu Pareja</h3>
+            <p class="feature-desc">Exporta cualquier tablero como QR o código de texto y compártelo por WhatsApp o iMessage. El otro dispositivo importa todos los gastos y el presupuesto al instante — <strong>sin cuenta, sin servidor, sin que tus datos salgan de tu dispositivo</strong>.</p>
           </article>
 
         </div>
@@ -1712,6 +1813,145 @@
             <p class="priority-card-desc">Ese gadget, esa ropa, esa suscripción de nicho. Innecesario, pero te saca una
               sonrisa.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SHARE SECTION ===== -->
+    <section class="section" id="compartir" aria-labelledby="share-heading">
+      <div class="container">
+        <div class="split">
+
+          <!-- Text column -->
+          <div>
+            <header class="section-header">
+              <p class="section-label">Compartir Sin Servidor</p>
+              <h2 class="section-title" id="share-heading">¿Tú pagas el arriendo<br>y tu pareja el super?</h2>
+              <p class="section-sub">Comparte cualquier tablero con tu pareja, familiar o compañero de departamento en segundos. Sin crear cuenta, sin servidor, sin que tus datos salgan de tu dispositivo.</p>
+            </header>
+
+            <div class="share-methods" role="list">
+              <div class="share-method-item" role="listitem">
+                <div class="share-method-icon" aria-hidden="true">📱</div>
+                <div>
+                  <div class="share-method-title">Escanea el QR</div>
+                  <div class="share-method-desc">Abre el tablero, toca 🔗 y muestra el código QR. El otro dispositivo lo escanea y el tablero — con todos los gastos y el presupuesto — se importa al instante.</div>
+                </div>
+              </div>
+              <div class="share-method-item" role="listitem">
+                <div class="share-method-icon" aria-hidden="true">💬</div>
+                <div>
+                  <div class="share-method-title">Envía el código por WhatsApp</div>
+                  <div class="share-method-desc">Copia el código de texto y pégalo en cualquier mensajería. El receptor abre la app, toca 📥 Importar, pega el código y listo. Funciona sin conexión a internet en el dispositivo destino.</div>
+                </div>
+              </div>
+              <div class="share-method-item" role="listitem">
+                <div class="share-method-icon" aria-hidden="true">🔗</div>
+                <div>
+                  <div class="share-method-title">Comparte la URL directa</div>
+                  <div class="share-method-desc">Copia la URL del tablero y pégala en el navegador del otro dispositivo. Los datos se importan automáticamente al abrirla — sin pasos adicionales.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="share-note" role="note">
+              <strong style="color:var(--green)">✓ Privacidad garantizada</strong> — Los datos viajan codificados directamente entre dispositivos. No pasan por ningún servidor. Tus gastos son solo tuyos.
+            </div>
+          </div>
+
+          <!-- Visual column -->
+          <div class="split-visual" aria-hidden="true">
+            <div class="share-visual-box">
+
+              <!-- Share sheet mock -->
+              <div class="share-visual-label">Tu dispositivo — tablero activo</div>
+              <div class="share-visual-sheet">
+                <div class="share-visual-sheet-title">🔗 Compartir Tablero</div>
+                <div class="share-visual-tabs">
+                  <div class="share-visual-tab active">QR / URL</div>
+                  <div class="share-visual-tab">Código</div>
+                </div>
+                <div class="share-visual-qr">
+                  <!-- SVG QR mock -->
+                  <svg width="80" height="80" viewBox="0 0 9 9" style="image-rendering:crisp-edges" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="9" height="9" fill="white"/>
+                    <!-- finder TL -->
+                    <rect x="0" y="0" width="3" height="3" rx="0.3" fill="#172b4d"/>
+                    <rect x="0.3" y="0.3" width="2.4" height="2.4" rx="0.2" fill="white"/>
+                    <rect x="0.8" y="0.8" width="1.4" height="1.4" rx="0.15" fill="#172b4d"/>
+                    <!-- finder TR -->
+                    <rect x="6" y="0" width="3" height="3" rx="0.3" fill="#172b4d"/>
+                    <rect x="6.3" y="0.3" width="2.4" height="2.4" rx="0.2" fill="white"/>
+                    <rect x="6.8" y="0.8" width="1.4" height="1.4" rx="0.15" fill="#172b4d"/>
+                    <!-- finder BL -->
+                    <rect x="0" y="6" width="3" height="3" rx="0.3" fill="#172b4d"/>
+                    <rect x="0.3" y="6.3" width="2.4" height="2.4" rx="0.2" fill="white"/>
+                    <rect x="0.8" y="6.8" width="1.4" height="1.4" rx="0.15" fill="#172b4d"/>
+                    <!-- data modules -->
+                    <rect x="4" y="0" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="5" y="1" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="4" y="2" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="6" y="2" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="3" y="3" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="5" y="3" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="7" y="3" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="4" y="4" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="6" y="4" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="8" y="4" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="3" y="5" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="5" y="5" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="8" y="5" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="4" y="6" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="6" y="6" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="3" y="7" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="5" y="7" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="7" y="7" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="4" y="8" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                    <rect x="6" y="8" width="1" height="1" rx="0.15" fill="#172b4d"/>
+                  </svg>
+                  <div style="font-size:10px;color:#5e6c84;text-align:center;line-height:1.5">Escanea para importar<br>en otro dispositivo</div>
+                </div>
+                <div class="share-visual-copy">🔗 Copiar URL</div>
+              </div>
+
+              <!-- Channel pills -->
+              <div class="share-visual-divider" role="presentation">
+                <span class="share-visual-channel">📱 QR</span>
+                <span class="share-visual-channel">💬 WhatsApp</span>
+                <span class="share-visual-channel">🔗 URL</span>
+                <span class="share-visual-channel">📨 iMessage</span>
+              </div>
+
+              <!-- Import result mock -->
+              <div class="share-visual-result">
+                <div class="share-visual-label" style="margin-bottom:10px">Otro dispositivo — importado al instante</div>
+                <div class="share-visual-result-header">
+                  <span style="font-size:22px">✅</span>
+                  <div>
+                    <div class="share-visual-result-title">Gastos de Marzo</div>
+                    <div class="share-visual-result-sub">8 gastos · Presupuesto $250.000</div>
+                  </div>
+                </div>
+                <div class="share-visual-card">
+                  <div class="share-visual-card-stripe" style="background:#de350b"></div>
+                  <span class="share-visual-card-name">Arriendo</span>
+                  <span class="share-visual-card-amount">$550K</span>
+                </div>
+                <div class="share-visual-card">
+                  <div class="share-visual-card-stripe" style="background:#de350b"></div>
+                  <span class="share-visual-card-name">Supermercado</span>
+                  <span class="share-visual-card-amount">$85K</span>
+                </div>
+                <div class="share-visual-card">
+                  <div class="share-visual-card-stripe" style="background:#0079bf"></div>
+                  <span class="share-visual-card-name">Netflix · Spotify</span>
+                  <span class="share-visual-card-amount">$14K</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -1850,6 +2090,7 @@
           <a href="index_app.html" class="footer-link">Demo Celular</a>
           <a href="#funciones" class="footer-link">Funciones</a>
           <a href="#como-funciona" class="footer-link">Cómo Funciona</a>
+          <a href="#compartir" class="footer-link">Compartir</a>
           <a href="#feedback" class="footer-link">Feedback</a>
         </nav>
       </div>
