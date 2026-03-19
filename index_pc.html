@@ -2468,6 +2468,15 @@
       }
       document.getElementById('boards-view').style.display = 'flex';
       renderBoards();
+      showFeedbackNudgePC();
+    }
+
+    function showFeedbackNudgePC() {
+      if (sessionStorage.getItem('nudgeSeen')) return;
+      sessionStorage.setItem('nudgeSeen', '1');
+      var el = document.getElementById('feedback-nudge-pc');
+      if (!el) return;
+      setTimeout(function() { el.style.display = 'flex'; }, 1800);
     }
 
     function logout() {
@@ -2534,6 +2543,10 @@
     document.getElementById('install-desktop-close').addEventListener('click', () => {
       document.getElementById('install-toast').style.display = 'none';
       localStorage.setItem(_installKey, '1');
+    });
+
+    document.getElementById('feedback-nudge-close-pc').addEventListener('click', function() {
+      document.getElementById('feedback-nudge-pc').style.display = 'none';
     });
 
     if ('serviceWorker' in navigator) {
@@ -2762,6 +2775,22 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>emailjs.init('u1PGzoaxrjwOf3HLq');</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- FEEDBACK NUDGE (desktop) -->
+  <div id="feedback-nudge-pc" style="display:none;position:fixed;bottom:24px;left:24px;z-index:500;
+    background:#172b4d;color:white;border-radius:14px;padding:16px 18px;
+    align-items:center;gap:14px;max-width:320px;animation:fadeInUp 0.3s ease">
+    <span style="font-size:30px;line-height:1;flex-shrink:0">💬</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:700">¿Cómo fue tu experiencia?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:3px">
+        Clic en <strong style="color:white">💬 Feedback</strong> en la barra de arriba.
+      </div>
+    </div>
+    <button id="feedback-nudge-close-pc" style="background:rgba(255,255,255,0.18);border:none;color:white;
+      cursor:pointer;font-size:13px;font-weight:600;padding:7px 12px;border-radius:8px;
+      white-space:nowrap;flex-shrink:0">OK</button>
+  </div>
 
   <!-- INSTALL TOAST (desktop) -->
   <div id="install-toast" style="display:none;position:fixed;bottom:24px;right:24px;z-index:500;

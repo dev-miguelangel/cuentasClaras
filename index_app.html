@@ -1631,6 +1631,14 @@
       }
       setView('boards-view');
       renderBoards();
+      showFeedbackNudge();
+    }
+    function showFeedbackNudge() {
+      if (sessionStorage.getItem('nudgeSeen')) return;
+      sessionStorage.setItem('nudgeSeen', '1');
+      var el = document.getElementById('feedback-nudge');
+      if (!el) return;
+      setTimeout(function() { el.style.display = 'flex'; }, 1800);
     }
     function logout() {
       sessionStorage.removeItem('currentUser');
@@ -2081,6 +2089,26 @@
       </div>
     </div>
   </div>
+
+  <!-- FEEDBACK NUDGE -->
+  <div id="feedback-nudge" style="display:none;position:fixed;bottom:calc(env(safe-area-inset-bottom,34px) + 12px);left:12px;right:12px;z-index:600;
+    background:#172b4d;color:white;border-radius:14px;padding:14px 16px;
+    align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,0.35);animation:fbNudgeIn 0.35s ease">
+    <span style="font-size:22px;flex-shrink:0">💬</span>
+    <div style="flex:1;min-width:0;font-size:13px;line-height:1.45">
+      <strong style="display:block;margin-bottom:2px">¿Cómo fue tu experiencia?</strong>
+      Toca <strong>💬</strong> en la barra de arriba y deja tu opinión. ¡30 segundos!
+    </div>
+    <button onclick="document.getElementById('feedback-nudge').style.display='none'"
+      style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:8px;
+      padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;-webkit-appearance:none">OK</button>
+  </div>
+  <style>
+    @keyframes fbNudgeIn {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+  </style>
 
 </body>
 </html>
